@@ -1,5 +1,4 @@
-window.addEventListener('load'
-, function () {
+window.addEventListener('load', function () {
     main();
 }, false);
 
@@ -15,32 +14,28 @@ function transpile() {
     CLS();
     PUT(src);
 
-/*    
-    var ss = new StringStream('test');
-    for (;;) {
-        var c = ss.getc();
-        if (c == null) {
-            break;
+    var tests = [
+        '123,',
+        'I=3029.9',
+        'I=1+3',
+        'I=(1+3)*2',
+        'I=(X_Y+3)*2',
+        'SCREEN 1, 2',
+        'LINE (20,40)-(50,50),3',
+   ];
+    tests.forEach(function (aLine) {
+        PUT(aLine);
+        var ss = new StringStream(aLine);
+        var tr = new Tokenizer(ss);
+        for (;;) {
+            var t = tr.getNextToken();
+            if (t == null) {
+                break;
+            }
+            PUT(t);
         }
-        PUT(c);
-    }
-    var c = '0'.charCodeAt(0);
-    PUT(isDigit(c));
-    */
-//    var ss = new StringStream('123,');
-//    var ss = new StringStream('I=3029.9');
-//    var ss = new StringStream('I=1+3');
-//    var ss = new StringStream('I=(1+3)*2');
-//    var ss = new StringStream('I=(X_Y+3)*2');
-    var ss = new StringStream('SCREEN 1, 2');
-    var tr = new Tokenizer(ss);
-    for (;;) {
-        var t = tr.getNextToken();
-        if (t == null) {
-            break;
-        }
-        PUT(t);
-    }
+        PUT('-----------');
+    });
 }
 
 function StringStream(aString) {
@@ -97,6 +92,8 @@ var TOKEN_OPEN_PAREN  = 'open_paren';
 var TOKEN_CLOSE_PAREN = 'close_paren';
 var TOKEN_SPACE = 'space';
 var TOKEN_COMMA = 'comma';
+var TOKEN_PERIOD = 'period';
+var TOKEN_EOS = 'eos';
 
 function CHR(c) {
     if (c == null) {
@@ -128,6 +125,9 @@ function Tokenizer(aStream) {
 }
 Tokenizer.prototype = {
     beginState: function (c) {
+        if (c == null) {
+          return TOKEN_EOS;
+        }
         if (isDigit(c)) {
             this.state = this.digitState;
             return null;
@@ -149,6 +149,7 @@ Tokenizer.prototype = {
             ['(', TOKEN_OPEN_PAREN],
             [')', TOKEN_CLOSE_PAREN],
             [',', TOKEN_COMMA],
+            ['.', TOKEN_PERIOD],
         ];
         for (var i = 0; i < operators.length; ++i) {
             var op    = operators[i][0];
@@ -213,12 +214,8 @@ Tokenizer.prototype = {
             var c = this.stream.getc();
             if (c == null) {
                 this.isEOF = true;
-                var result = this.check(null);
-                if (result != null) {
-                    return result;
-                }
-                return  null;
-            }
+                return this.check(null);
+           }
             this.token += c;
             var result = this.check(c);
             if (result != null) {
