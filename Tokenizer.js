@@ -1,59 +1,3 @@
-window.addEventListener('load', function () {
-    main();
-}, false);
-
-function main() {
-    var button = document.getElementById('transpile');
-    button.addEventListener('click', function () {
-        transpile();
-    }, false);
-    PUT('Hello');
-}
-function transpile() {
-    var src = document.getElementById('source').value;
-    CLS();
-    PUT(src);
-
-    var tests = [
-        '123,',
-        'I=3029.9',
-        'I=1+3',
-        'I=(1+3)*2',
-        'I=(X_Y+3)*2',
-        'SCREEN 1, 2',
-        'LINE (20,40)-(50,50),3',
-   ];
-    tests.forEach(function (aLine) {
-        PUT(aLine);
-        var ss = new StringStream(aLine);
-        var tr = new Tokenizer(ss);
-        for (;;) {
-            var t = tr.getNextToken();
-            if (t == null) {
-                break;
-            }
-            PUT(t);
-        }
-        PUT('-----------');
-    });
-}
-
-function StringStream(aString) {
-    this.string = aString;
-    this.index = 0;
-}
-StringStream.prototype = {
-    getc: function () {
-        if (this.string.length == this.index) {
-            return null; // EOF
-        }
-        return this.string.charAt(this.index++);
-    },
-    back: function () {
-        this.index--;
-    },
-};
-
 // 登場する文字種
 // A-Za-z    => ALPHA
 // 0-9       => DIGIT
@@ -76,9 +20,6 @@ StringStream.prototype = {
 // SEPARATOR   => ;
 // COMMA       => ,
 
-var STATUS_BEGIN = 'begin';
-var STATUS_END   = 'end';
-
 var TOKEN_DIGIT = 'digit';
 var TOKEN_IDENT = 'ident';
 var TOKEN_EQUAL = 'equal';
@@ -95,12 +36,6 @@ var TOKEN_COMMA = 'comma';
 var TOKEN_PERIOD = 'period';
 var TOKEN_EOS = 'eos';
 
-function CHR(c) {
-    if (c == null) {
-        return -1;
-    }
-    return c.charCodeAt(0);
-}
 function isAlpha(c) {
     var code = CHR(c);
     return (CHR('A') <= code && code <= CHR('Z'))
@@ -115,6 +50,31 @@ function isDigit(c) {
 }
 function isSpace(c) {
     return c == ' ';
+}
+
+function testTokenizer() {
+    var tests = [
+        '123,',
+        'I=3029.9',
+        'I=1+3',
+        'I=(1+3)*2',
+        'I=(X_Y+3)*2',
+        'SCREEN 1, 2',
+        'LINE (20,40)-(50,50),3',
+    ];
+    tests.forEach(function (aLine) {
+        PUT(aLine);
+        var ss = new StringStream(aLine);
+        var tr = new Tokenizer(ss);
+        for (;;) {
+            var t = tr.getNextToken();
+            if (t == null) {
+                break;
+            }
+            PUT(t);
+        }
+        PUT('-----------');
+    });
 }
 
 function Tokenizer(aStream) {
@@ -224,11 +184,3 @@ Tokenizer.prototype = {
         }
     },
 };
-function CLS() {
-    var console = document.getElementById('console');
-    console.innerHTML = '';
-}
-function PUT(aText) {
-    var console = document.getElementById('console');
-    console.innerHTML += aText + '\n';
-}
