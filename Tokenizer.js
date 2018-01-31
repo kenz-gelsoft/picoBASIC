@@ -35,6 +35,7 @@ var TOKEN_SPACE = 'space';
 var TOKEN_COMMA = 'comma';
 var TOKEN_PERIOD = 'period';
 var TOKEN_EOS = 'eos';
+var TOKEN_STRING = 'string';
 
 function isAlpha(c) {
     var code = CHR(c);
@@ -54,6 +55,8 @@ function isSpace(c) {
 
 function testTokenizer() {
     var tests = [
+        'PRINT"HELLO \\\"WORLD\\\""',
+        'PRINT"HELLO"',
         '123,',
         'I=3029.9',
         'I=1+3',
@@ -61,7 +64,7 @@ function testTokenizer() {
         'I=(X_Y+3)*2',
         'SCREEN 1, 2',
         'LINE (20,40)-(50,50),3',
-    ];
+   ];
     tests.forEach(function (aLine) {
         PUT(aLine);
         var ss = new StringStream(aLine);
@@ -82,6 +85,7 @@ function Tokenizer(aStream) {
     this.token = '';
     this.state = this.beginState;
     this.isEOF = false;
+    this.escaped = false;
 }
 Tokenizer.prototype = {
     beginState: function (c) {
@@ -98,6 +102,10 @@ Tokenizer.prototype = {
         }
         if (isSpace(c)) {
             this.state = this.spaceState;
+            return null;
+        }
+        if (c == '"') {
+            this.state = this.stringState;
             return null;
         }
         var operators = [
@@ -152,6 +160,18 @@ Tokenizer.prototype = {
         }
         this.back();
         return TOKEN_SPACE;
+    },
+    
+    stringState: function (c) {
+        if (c == '\\') {
+            this.escaped = true;
+            return null;
+        }
+        if (!this.escaped && c == '"') {
+           return TOKEN_STRING;
+        }
+        this.escaped = false;
+        return null;
     },
     
     check: function (c) {
