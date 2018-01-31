@@ -3,14 +3,21 @@
         <script type="text/javascript" src="BasicUtils.js"></script>
         <script type="text/javascript" src="StringStream.js"></script>
         <script type="text/javascript" src="Tokenizer.js"></script>
+        <script type="text/javascript" src="Parser.js"></script>
         <script type="text/javascript" src="basic.js"></script>
+        <style type="text/css">
+textarea {
+    font-family: monospace;
+}
+        </style>
     </head>
     <body>
-        <textarea id="source" cols="80" rows="24"></textarea>
+        <textarea id="source" cols="80" rows="24">
+CLS
+PRINT "HELLO"</textarea>
         <div>
-            <button id="test">Test</button>
-            <button id="transpile">Transpile</button>
-        </div>
+            <button id="run">RUN</button>
+       </div>
         <pre id="console" ></pre>
     </body>
 </html>

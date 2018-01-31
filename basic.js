@@ -3,15 +3,18 @@ window.addEventListener('load', function () {
 }, false);
 
 function main() {
-    var doTranspile = document.getElementById('transpile');
-    doTranspile.addEventListener('click', function () {
-        transpile();
+    var button = document.getElementById('run');
+    button.addEventListener('click', function () {
+//        testTokenizer();
+        var lines = document.getElementById('source').value.split('\n');
+        lines.forEach(function (aLine) {
+            var ss = new StringStream(aLine);
+            var tr = new Tokenizer(ss);
+            var p = new Parser(tr);
+            p.parse();
+        });
     }, false);
-    var doTest = document.getElementById('test');
-    doTest.addEventListener('click', function () {
-        testTokenizer();
-    }, false);
-    PUT('Hello');
+    PUT('This is console.');
 }
 function transpile() {
     var src = document.getElementById('source').value;
