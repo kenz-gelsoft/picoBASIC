@@ -2,6 +2,7 @@ window.addEventListener('load', function () {
     main();
 }, false);
 
+var console = null;
 function main() {
     var button = document.getElementById('run');
     button.addEventListener('click', function () {
@@ -14,6 +15,9 @@ function main() {
             p.parse();
         });
     }, false);
+    
+    console = new Console('console');
+    
     PUT('This is console.');
 }
 function transpile() {

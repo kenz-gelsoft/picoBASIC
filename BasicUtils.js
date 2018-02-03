@@ -1,10 +1,9 @@
+var console = null;
 function CLS() {
-    var console = document.getElementById('console');
-    console.innerHTML = '';
+    console.clear();
 }
 function PUT(aText) {
-    var console = document.getElementById('console');
-    console.innerHTML += aText + '\n';
+    console.print(aText + '\n');
 }
 function CHR(c) {
     if (c == null) {
