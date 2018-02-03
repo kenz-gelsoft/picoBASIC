@@ -12,6 +12,7 @@ Console.prototype = {
         for (var i = 0; i < this.COLS * this.ROWS; ++i) {
             this.buffer += ' ';
         }
+        this.cursor = 0;
         this.update();
     },
     update: function () {
