@@ -38,15 +38,15 @@ var TOKEN_EOS = 'eos';
 var TOKEN_STRING = 'string';
 
 function isAlpha(c) {
-    var code = CHR(c);
-    return (CHR('A') <= code && code <= CHR('Z'))
-        || (CHR('a') <= code && code <= CHR('z'));
+    var code = ASC(c);
+    return (ASC('A') <= code && code <= ASC('Z'))
+        || (ASC('a') <= code && code <= ASC('z'));
 }
 function isIdentStart(c) {
     return c == '_' || isAlpha(c);
 }
 function isDigit(c) {
-    var num = CHR(c) - CHR('0');
+    var num = ASC(c) - ASC('0');
     return 0 <= num && num <= 9;
 }
 function isSpace(c) {
@@ -64,7 +64,7 @@ function testTokenizer() {
         'I=(X_Y+3)*2',
         'SCREEN 1, 2',
         'LINE (20,40)-(50,50),3',
-   ];
+    ];
     tests.forEach(function (aLine) {
         PUT(aLine);
         var ss = new StringStream(aLine);

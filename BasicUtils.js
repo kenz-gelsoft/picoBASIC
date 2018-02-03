@@ -8,7 +8,7 @@ function PUT(aText) {
 function LOCATE(x, y) {
     console.locate(x, y);
 }
-function CHR(c) {
+function ASC(c) {
     if (c == null) {
         return -1;
     }
