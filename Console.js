@@ -30,4 +30,7 @@ Console.prototype = {
         this.buffer = this.buffer.substring(0, max);
         this.update();
     },
+    locate: function (x, y) {
+        this.cursor = x + y * this.COLS;
+    },
 };

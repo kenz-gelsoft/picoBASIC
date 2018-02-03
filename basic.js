@@ -18,6 +18,7 @@ function main() {
     
     console = new Console('console');
     
+    LOCATE(10, 5);
     PUT('This is console.');
 }
 function transpile() {

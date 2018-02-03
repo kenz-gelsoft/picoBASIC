@@ -7,14 +7,22 @@ Parser.prototype = {
             eval('CLS();');
         },
         PRINT: function () {
-            var t2 = this.tr.getNextToken();
-            while (t2[0] == TOKEN_SPACE) {
-                t2 = this.tr.getNextToken();
-            }
+            var t2 = this.skipWhitespaces();
             if (t2[0] != TOKEN_STRING) {
                 throw 'Syntax error';
             }
             eval('PUT(' + t2[1] + ');');
+        },
+        LOCATE: function () {
+            var t2 = this.skipWhitespaces();
+            var t3 = this.skipWhitespaces();
+            var t4 = this.skipWhitespaces();
+            if (t2[0] != TOKEN_DIGIT ||
+                t3[0] != TOKEN_COMMA ||
+                t4[0] != TOKEN_DIGIT) {
+                throw 'Syntax error';
+            }
+            eval('LOCATE(' + t2[1] + ',' + t4[1] + ')');
         },
     },
     parse: function () {
@@ -24,5 +32,12 @@ Parser.prototype = {
             var statement = t[1].toUpperCase();
             this.statements[statement].apply(this);
         }
+    },
+    skipWhitespaces: function () {
+        var t = this.tr.getNextToken();
+        while (t[0] == TOKEN_SPACE) {
+            t = this.tr.getNextToken();
+        }
+        return t;
     },
 };
