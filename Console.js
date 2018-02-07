@@ -29,12 +29,15 @@ Console.prototype = {
         var pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
     },
-    print: function (aString, aNewLine) {
+    print: function (aString, aNewLine, aInsert) {
         var max = this.ROWS * this.COLS;
+        var n = aInsert ? 0 : aString.length;
         var front = this.buffer.substring(0, this.cursor);
-        var rear  = this.buffer.substring(this.cursor, max);
+        var rear  = this.buffer.substring(this.cursor + n, max);
         this.buffer = front + aString + rear;
-        this.buffer = this.buffer.substring(0, max);
+        if (aInsert) {
+            this.buffer = this.buffer.substring(0, max);
+        }
         if (aNewLine) {
             this.locate(0, this.getY() + 1);
         } else {
@@ -89,7 +92,7 @@ Console.prototype = {
         case 'Dead':
             break;
         default:
-            this.print(aEvent.key);
+            this.print(aEvent.key, false, true);
         }
     },
 };
