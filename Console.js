@@ -2,6 +2,12 @@ function Console(aId) {
     this.id = aId;
     this.cursor = 0;
     this.clear();
+    
+    var that = this;
+    window.addEventListener('keydown', function (event) {
+        that.keyDown(event);
+        event.preventDefault();
+    }, false);
 }
 Console.prototype = {
     COLS: 80,
@@ -23,15 +29,67 @@ Console.prototype = {
         var pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
     },
-    print: function (aString) {
+    print: function (aString, aNewLine) {
         var max = this.ROWS * this.COLS;
         var front = this.buffer.substring(0, this.cursor);
         var rear  = this.buffer.substring(this.cursor, max);
         this.buffer = front + aString + rear;
         this.buffer = this.buffer.substring(0, max);
+        if (aNewLine) {
+            this.locate(0, this.getY() + 1);
+        } else {
+            this.cursor += aString.length;
+        }
         this.update();
+    },
+    backspace: function () {
+        --this.cursor;
+        var max = this.ROWS * this.COLS;
+        var front = this.buffer.substring(0, this.cursor);
+        var rear  = this.buffer.substring(this.cursor + 1, max);
+        this.buffer = front + ' ' + rear;
+        this.update();
+    },
+    getX: function () {
+        return this.cursor % this.COLS;
+    },
+    getY: function () {
+        return (this.cursor / this.COLS) | 0;
     },
     locate: function (x, y) {
         this.cursor = x + y * this.COLS;
+    },
+    keyDown: function (aEvent) {
+        switch (aEvent.key) {
+        case 'ArrowUp':
+        case 'UIKeyInputUpArrow':
+            //this.locate(this.getX(), this.getY() - 1);
+            break;
+        case 'ArrowLeft':
+        case 'UIKeyInputLeftArrow':
+            this.locate(this.getX() - 1, this.getY());
+            break;
+        case 'ArrowRight':
+        case 'UIKeyInputRightArrow':
+            this.locate(this.getX() + 1, this.getY());
+            break;
+        case 'ArrowDown':
+        case 'UIKeyInputDownArrow':
+            //this.locate(this.getX(), this.getY() + 1);
+            break;
+        case 'Enter':
+            this.print('', true);
+            break;
+        case 'Backspace':
+            if (this.getX() > 0) {
+                this.backspace();
+            }
+            break;
+        case 'Shift':
+        case 'Dead':
+            break;
+        default:
+            this.print(aEvent.key);
+        }
     },
 };
