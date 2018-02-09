@@ -62,6 +62,9 @@ Console.prototype = {
     locate: function (x, y) {
         this.cursor = x + y * this.COLS;
     },
+    getCursorLine: function () {
+        return this.buffer.substr(this.COLS * this.getY(), this.COLS);
+    },
     keyDown: function (aEvent) {
         switch (aEvent.key) {
         case 'ArrowUp':
@@ -81,7 +84,9 @@ Console.prototype = {
             //this.locate(this.getX(), this.getY() + 1);
             break;
         case 'Enter':
+            var line = this.getCursorLine();
             this.print('', true);
+            parseLine(line, true);
             break;
         case 'Backspace':
             if (this.getX() > 0) {

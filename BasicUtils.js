@@ -3,7 +3,7 @@ function CLS() {
     console.clear();
 }
 function PUT(aText) {
-    console.print(aText + '\n');
+    console.print(aText, true);
 }
 function LOCATE(x, y) {
     console.locate(x, y);

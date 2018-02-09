@@ -9,10 +9,7 @@ function main() {
 //        testTokenizer();
         var lines = document.getElementById('source').value.split('\n');
         lines.forEach(function (aLine) {
-            var ss = new StringStream(aLine);
-            var tr = new Tokenizer(ss);
-            var p = new Parser(tr);
-            p.parse();
+            parseLine(aLine);
         });
     }, false);
     
@@ -20,6 +17,15 @@ function main() {
     
     LOCATE(10, 5);
     PUT('This is console.');
+}
+function parseLine(aLine, aPrintOk) {
+    var ss = new StringStream(aLine);
+    var tr = new Tokenizer(ss);
+    var p = new Parser(tr);
+    p.parse();
+    if (aPrintOk) {
+        PUT('Ok');
+    }
 }
 function transpile() {
     var src = document.getElementById('source').value;
