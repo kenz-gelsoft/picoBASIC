@@ -19,11 +19,3 @@ function parseLine(aLine, aPrintOk) {
         PUT('Ok');
     }
 }
-function transpile() {
-    var src = document.getElementById('source').value;
-    CLS();
-    PUT(src);
-}
-
-var STATUS_BEGIN = 'begin';
-var STATUS_END   = 'end';
