@@ -110,7 +110,11 @@ Console.prototype = {
         case 'Enter':
             var line = this.getCursorLine();
             this.print('', true);
-            parseLine(line, true);
+            try {
+                parseLine(line, true);
+            } catch (e) {
+                PUT('Syntax error')
+            }
             break;
         case 'Backspace':
             if (this.getX() > 0) {
