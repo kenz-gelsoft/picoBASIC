@@ -14,20 +14,44 @@ Console.prototype = {
     ROWS: 24,
 
     clear: function () {
-        this.buffer = '';
-        for (var i = 0; i < this.COLS * this.ROWS; ++i) {
-            this.buffer += ' ';
-        }
+        this.buffer = this.chars(' ', this.COLS * this.ROWS);
         this.cursor = 0;
         this.update();
     },
     update: function () {
+        while (this.getY() >= this.ROWS) {
+            this.scroll();
+        }
         var lines = [];
         for (var i = 0; i < this.ROWS; ++i) {
             lines.push(this.buffer.substr(i * this.COLS, this.COLS));
         }
         var pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
+        this.debug();
+    },
+    scroll: function () {
+        this.buffer = this.buffer.substring(this.COLS);
+        this.buffer += this.chars(' ', this.COLS);
+        this.cursor -= this.COLS;
+    },
+    chars: function (char, count) {
+        var s = '';
+        for (var i = 0; i < count; ++i) {
+            s += char;
+        }
+        return s;
+    },
+    debug: function () {
+        var msg = '';
+        var items = [
+            ['cursor', this.cursor],
+            ['x', this.getX()],
+            ['y', this.getY()],
+        ].forEach(function (item) {
+            msg += item.join('=') + '\n';
+        });
+        document.getElementById('debug').innerHTML = msg;
     },
     print: function (aString, aNewLine, aInsert) {
         var max = this.ROWS * this.COLS;
