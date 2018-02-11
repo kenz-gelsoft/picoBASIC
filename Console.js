@@ -54,6 +54,7 @@ Console.prototype = {
         document.getElementById('debug').innerHTML = msg;
     },
     print: function (aString, aNewLine, aInsert) {
+        aString = aString.toString();
         var max = this.ROWS * this.COLS;
         var n = aInsert ? 0 : aString.length;
         var front = this.buffer.substring(0, this.cursor);
