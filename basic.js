@@ -6,8 +6,8 @@ var console = null;
 function main() {
     console = new Console('console');
     
-    PUT('WeBASIC version 0.0');
-    PUT('COPYRIGHT (C) WeBASIC PROJECT.');
+    PUT('picoBASIC version 0.0');
+    PUT('COPYRIGHT (C) 2018 picoBASIC PROJECT.');
     PUT('Ok ');
 }
 function parseLine(aLine, aPrintOk) {
