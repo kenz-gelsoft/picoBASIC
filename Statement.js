@@ -1,7 +1,7 @@
-function Parser(aTokenizer) {
+function Statement(aTokenizer) {
     this.tr = aTokenizer;
 }
-Parser.prototype = {
+Statement.prototype = {
     statements: {
         CLS: function () {
             eval('CLS();');
@@ -25,7 +25,7 @@ Parser.prototype = {
             eval('LOCATE(' + t2[1] + ',' + t4[1] + ')');
         },
     },
-    parseStatement: function () {
+    parse: function () {
         var t = this.tr.skipWhitespaces();
         switch (t[0]) {
         case TOKEN_IDENT:

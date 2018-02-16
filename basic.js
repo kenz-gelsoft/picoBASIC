@@ -13,8 +13,8 @@ function main() {
 function parseLine(aLine, aPrintOk) {
     var ss = new StringStream(aLine);
     var tr = new Tokenizer(ss);
-    var p = new Parser(tr);
-    p.parseStatement();
+    var s = new Statement(tr);
+    s.parse();
     if (aPrintOk) {
         PUT('Ok');
     }
