@@ -12,6 +12,8 @@ function Console(aId) {
 Console.prototype = {
     COLS: 80,
     ROWS: 24,
+    
+    DEBUG: true,
 
     clear: function () {
         this.buffer = this.chars(' ', this.COLS * this.ROWS);
@@ -28,7 +30,7 @@ Console.prototype = {
         }
         var pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
-        this.debug();
+        //this.debug();
     },
     scroll: function () {
         this.buffer = this.buffer.substring(this.COLS);
@@ -90,6 +92,17 @@ Console.prototype = {
     getCursorLine: function () {
         return this.buffer.substr(this.COLS * this.getY(), this.COLS);
     },
+    parseLine: function (aLine) {
+        if (this.DEBUG) {
+            parseLine(aLine, true);
+            return;
+        }
+        try {
+            parseLine(line, true);
+        } catch (e) {
+            PUT('Syntax error');
+        }
+    },
     keyDown: function (aEvent) {
         switch (aEvent.key) {
         case 'ArrowUp':
@@ -111,11 +124,7 @@ Console.prototype = {
         case 'Enter':
             var line = this.getCursorLine();
             this.print('', true);
-            try {
-                parseLine(line, true);
-            } catch (e) {
-                PUT('Syntax error')
-            }
+            this.parseLine(line);
             break;
         case 'Backspace':
             if (this.getX() > 0) {

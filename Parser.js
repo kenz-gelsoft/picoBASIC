@@ -7,16 +7,16 @@ Parser.prototype = {
             eval('CLS();');
         },
         PRINT: function () {
-            var expr = this.parseExpression();
-            if (expr == null) {
+            var expr = new Expr(this.tr);
+            if (!expr.parse()) {
                 throw 'Syntax error';
             }
-            eval('PUT(' + expr[1] + ');');
+            eval('PUT(' + expr.toJS() + ');');
         },
         LOCATE: function () {
-            var t2 = this.skipWhitespaces();
-            var t3 = this.skipWhitespaces();
-            var t4 = this.skipWhitespaces();
+            var t2 = this.tr.skipWhitespaces();
+            var t3 = this.tr.skipWhitespaces();
+            var t4 = this.tr.skipWhitespaces();
             if (t2[0] != TOKEN_DIGIT ||
                 t3[0] != TOKEN_COMMA ||
                 t4[0] != TOKEN_DIGIT) {
@@ -26,29 +26,15 @@ Parser.prototype = {
         },
     },
     parseStatement: function () {
-        var t = this.tr.getNextToken();
+        var t = this.tr.skipWhitespaces();
         switch (t[0]) {
         case TOKEN_IDENT:
             var statement = t[1].toUpperCase();
             this.statements[statement].apply(this);
+            var t2 = this.tr.skipWhitespaces();
+            if (t2) {
+                throw 'Syntax error';
+            }
         }
-    },
-    parseExpression: function () {
-        var t = this.skipWhitespaces();
-        switch (t[0]) {
-        case TOKEN_IDENT:
-        case TOKEN_DIGIT:
-        case TOKEN_STRING:
-            return t;
-        }
-        this.tr.back();
-        return null;
-    },
-    skipWhitespaces: function () {
-        var t = this.tr.getNextToken();
-        while (t[0] == TOKEN_SPACE) {
-            t = this.tr.getNextToken();
-        }
-        return t;
     },
 };

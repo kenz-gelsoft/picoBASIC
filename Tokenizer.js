@@ -36,6 +36,7 @@ var TOKEN_COMMA = 'comma';
 var TOKEN_PERIOD = 'period';
 var TOKEN_EOS = 'eos';
 var TOKEN_STRING = 'string';
+var TOKEN_EXPR = 'expr';
 
 function isAlpha(c) {
     var code = ASC(c);
@@ -195,12 +196,20 @@ Tokenizer.prototype = {
             if (c == null) {
                 this.isEOF = true;
                 return this.check(null);
-           }
+            }
             this.token += c;
             var result = this.check(c);
             if (result != null) {
                 return result;
             }
         }
+    },
+
+    skipWhitespaces: function () {
+        var t = this.getNextToken();
+        while (t != null && t[0] == TOKEN_SPACE) {
+            t = this.getNextToken();
+        }
+        return t;
     },
 };
