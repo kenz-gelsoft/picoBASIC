@@ -2,6 +2,13 @@ function Expr(aTokenizer) {
     this.tr = aTokenizer;
     this.rpn = [];
 }
+Expr.parse = function (tr) {
+    var e = new Expr(tr);
+    if (!e.parse()) {
+        return null;
+    }
+    return e;
+};
 Expr.prototype = {
     parse: function () {
         var opStack = [];
@@ -41,7 +48,6 @@ Expr.prototype = {
         document.getElementById('debug').innerHTML += aStr + '\n';
     },
     toJS: function () {
-        // 1 2 +
         var calcStack = [];
         this.debug(this.rpn);
         while (true) {
