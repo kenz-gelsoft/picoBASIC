@@ -50,7 +50,7 @@ function testTokenizer() {
         var ss = new StringStream(aLine);
         var tr = new Tokenizer(ss);
         for (;;) {
-            var t = tr.getNextToken();
+            var t = tr.next();
             if (t == null) {
                 break;
             }
@@ -69,7 +69,7 @@ function Tokenizer(aStream) {
 }
 Tokenizer.prototype = {
     // returns [type, string]
-    getNextToken: function () {
+    next: function () {
         if (this.isEOF) {
             return null;
         }

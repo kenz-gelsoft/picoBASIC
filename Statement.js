@@ -9,12 +9,12 @@ Statement.parse = function (tr) {
 };
 Statement.prototype = {
     parse: function () {
-        var t = this.tr.getNextToken();
+        var t = this.tr.next();
         switch (t[0]) {
         case TOKEN_IDENT:
             var s = t[1].toUpperCase();
             this.js = this[s].apply(this);
-            var t2 = this.tr.getNextToken();
+            var t2 = this.tr.next();
             if (t2) {
                 throw 'Syntax error';
             }
@@ -36,9 +36,9 @@ Statement.prototype = {
         return 'PUT(' + expr.toJS() + ');';
     },
     LOCATE: function () {
-        var t2 = this.tr.getNextToken();
-        var t3 = this.tr.getNextToken();
-        var t4 = this.tr.getNextToken();
+        var t2 = this.tr.next();
+        var t3 = this.tr.next();
+        var t4 = this.tr.next();
         if (t2[0] != TOKEN_INT ||
             t3[0] != TOKEN_COMMA ||
             t4[0] != TOKEN_INT) {
