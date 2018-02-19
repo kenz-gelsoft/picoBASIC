@@ -68,6 +68,46 @@ function Tokenizer(aStream) {
     this.escaped = false;
 }
 Tokenizer.prototype = {
+    // returns [type, string]
+    getNextToken: function () {
+        if (this.isEOF) {
+            return null;
+        }
+        for (;;) {
+            var c = this.stream.getc();
+            if (c == null) {
+                this.isEOF = true;
+                return this.check(null);
+            }
+            this.token += c;
+            var result = this.check(c);
+            if (result != null) {
+                return result;
+            }
+        }
+    },
+
+    back: function () {
+        if (this.isEOF) {
+            return;
+        }
+        this.stream.back();
+        this.token = this.token.substr(0, this.token.length - 1);
+    },
+    
+    check: function (c) {
+        var result = this.state(c);
+        if (result != null) {
+            var token = this.token;
+            this.token = '';
+            this.state = this.beginState;
+            return [result, token];
+        }
+        return null;
+    },
+    
+    // Tokenizer states
+
     beginState: function (c) {
         if (c == null) {
           return TOKEN_EOS;
@@ -108,14 +148,6 @@ Tokenizer.prototype = {
         throw 'Unexpected token';
     },
     
-    back: function () {
-        if (this.isEOF) {
-            return;
-        }
-        this.stream.back();
-        this.token = this.token.substr(0, this.token.length - 1);
-    },
-    
     intOrFloatState: function (c) {
         if (c == '.') {
             this.state = this.floatState;
@@ -144,15 +176,6 @@ Tokenizer.prototype = {
         return TOKEN_IDENT;
     },
     
-    skipSpaceState: function (c) {
-        if (isSpace(c)) {
-            return null;
-        }
-        this.back();
-        this.state = this.beginState;
-        return null;
-    },
-    
     stringState: function (c) {
         if (c == '\\') {
             this.escaped = true;
@@ -165,33 +188,12 @@ Tokenizer.prototype = {
         return null;
     },
     
-    check: function (c) {
-        var result = this.state(c);
-        if (result != null) {
-            var token = this.token;
-            this.token = '';
-            this.state = this.beginState;
-            return [result, token];
-        }
-        return null;
-    },
-    
-    // returns [type, string]
-    getNextToken: function () {
-        if (this.isEOF) {
+    skipSpaceState: function (c) {
+        if (isSpace(c)) {
             return null;
         }
-        for (;;) {
-            var c = this.stream.getc();
-            if (c == null) {
-                this.isEOF = true;
-                return this.check(null);
-            }
-            this.token += c;
-            var result = this.check(c);
-            if (result != null) {
-                return result;
-            }
-        }
+        this.back();
+        this.state = this.beginState;
+        return null;
     },
 };
