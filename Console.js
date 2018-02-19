@@ -6,7 +6,6 @@ function Console(aId) {
     var that = this;
     window.addEventListener('keydown', function (event) {
         that.keyDown(event);
-        event.preventDefault();
     }, false);
 }
 Console.prototype = {
@@ -104,6 +103,16 @@ Console.prototype = {
         }
     },
     keyDown: function (aEvent) {
+        var keysToIgnore = [
+            'Shift', 'Dead',
+            'Alt', 'Control',
+            'F5'
+        ];
+        if (aEvent.getModifierState('Alt') ||
+            aEvent.getModifierState('Control') ||
+            keysToIgnore.includes(aEvent.key)) {
+            return;
+        }
         switch (aEvent.key) {
         case 'ArrowUp':
         case 'UIKeyInputUpArrow':
@@ -131,11 +140,9 @@ Console.prototype = {
                 this.backspace();
             }
             break;
-        case 'Shift':
-        case 'Dead':
-            break;
         default:
             this.print(aEvent.key, false, true);
         }
+        aEvent.preventDefault();
     },
 };
