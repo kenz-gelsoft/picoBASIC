@@ -15,7 +15,7 @@ Expr.prototype = {
         
         var waitingOperator = false;
         while (true) {
-            var t = this.tr.skipWhitespaces();
+            var t = this.tr.getNextToken();
             this.debug(t);
             if (waitingOperator) {
                 if (!this.isOperator(t)) {

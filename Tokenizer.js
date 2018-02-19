@@ -81,7 +81,7 @@ Tokenizer.prototype = {
             return null;
         }
         if (isSpace(c)) {
-            this.state = this.spaceState;
+            this.state = this.skipSpaceState;
             return null;
         }
         if (c == '"') {
@@ -144,12 +144,13 @@ Tokenizer.prototype = {
         return TOKEN_IDENT;
     },
     
-    spaceState: function (c) {
+    skipSpaceState: function (c) {
         if (isSpace(c)) {
             return null;
         }
         this.back();
-        return TOKEN_SPACE;
+        this.state = this.beginState;
+        return null;
     },
     
     stringState: function (c) {
@@ -192,13 +193,5 @@ Tokenizer.prototype = {
                 return result;
             }
         }
-    },
-
-    skipWhitespaces: function () {
-        var t = this.getNextToken();
-        while (t != null && t[0] == TOKEN_SPACE) {
-            t = this.getNextToken();
-        }
-        return t;
     },
 };
