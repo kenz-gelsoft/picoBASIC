@@ -20,7 +20,8 @@
 // SEPARATOR   => ;
 // COMMA       => ,
 
-var TOKEN_DIGIT = 'digit';
+var TOKEN_INT = 'int';
+var TOKEN_FLOAT = 'float';
 var TOKEN_IDENT = 'ident';
 var TOKEN_EQUAL = 'equal';
 var TOKEN_PLUS  = 'plus';
@@ -94,7 +95,7 @@ Tokenizer.prototype = {
           return TOKEN_EOS;
         }
         if (isDigit(c)) {
-            this.state = this.digitState;
+            this.state = this.intOrFloatState;
             return null;
         }
         if (isIdentStart(c)) {
@@ -118,7 +119,6 @@ Tokenizer.prototype = {
             ['(', TOKEN_OPEN_PAREN],
             [')', TOKEN_CLOSE_PAREN],
             [',', TOKEN_COMMA],
-            ['.', TOKEN_PERIOD],
         ];
         for (var i = 0; i < operators.length; ++i) {
             var op    = operators[i][0];
@@ -138,12 +138,23 @@ Tokenizer.prototype = {
         this.token = this.token.substr(0, this.token.length - 1);
     },
     
-    digitState: function (c) {
+    intOrFloatState: function (c) {
+        if (c == '.') {
+            this.state = this.floatState;
+            return null;
+        }
         if (isDigit(c)) {
             return null;
         }
         this.back();
-        return TOKEN_DIGIT;
+        return TOKEN_INT;
+    },
+    floatState: function (c) {
+        if (isDigit(c)) {
+            return null;
+        }
+        this.back();
+        return TOKEN_FLOAT;
     },
     
     identState: function (c) {

@@ -39,9 +39,9 @@ Statement.prototype = {
         var t2 = this.tr.skipWhitespaces();
         var t3 = this.tr.skipWhitespaces();
         var t4 = this.tr.skipWhitespaces();
-        if (t2[0] != TOKEN_DIGIT ||
+        if (t2[0] != TOKEN_INT ||
             t3[0] != TOKEN_COMMA ||
-            t4[0] != TOKEN_DIGIT) {
+            t4[0] != TOKEN_INT) {
             throw 'Syntax error';
         }
         return 'LOCATE(' + t2[1] + ',' + t4[1] + ')';

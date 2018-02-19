@@ -96,7 +96,8 @@ Expr.prototype = {
         }
         switch (aToken[0]) {
         case TOKEN_IDENT:
-        case TOKEN_DIGIT:
+        case TOKEN_INT:
+        case TOKEN_FLOAT:
         case TOKEN_STRING:
         case TOKEN_EXPR:
             return true;
