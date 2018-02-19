@@ -49,7 +49,7 @@ function testTokenizer() {
         PUT(aLine);
         var ss = new StringStream(aLine);
         var tr = new Tokenizer(ss);
-        for (;;) {
+        while (true) {
             var t = tr.next();
             if (t == null) {
                 break;
@@ -73,16 +73,19 @@ Tokenizer.prototype = {
         if (this.isEOF) {
             return null;
         }
-        for (;;) {
+        while (true) {
             var c = this.stream.getc();
             if (c == null) {
                 this.isEOF = true;
-                return this.check(null);
+            } else {
+                this.token += c;
             }
-            this.token += c;
-            var result = this.check(c);
-            if (result != null) {
-                return result;
+            var type = this.state(c);
+            if (type != null) {
+                var value = this.token;
+                this.token = '';
+                this.state = this.beginState;
+                return [type, value];
             }
         }
     },
@@ -93,17 +96,6 @@ Tokenizer.prototype = {
         }
         this.stream.back();
         this.token = this.token.substr(0, this.token.length - 1);
-    },
-    
-    check: function (c) {
-        var result = this.state(c);
-        if (result != null) {
-            var token = this.token;
-            this.token = '';
-            this.state = this.beginState;
-            return [result, token];
-        }
-        return null;
     },
     
     // Tokenizer states
