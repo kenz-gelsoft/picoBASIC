@@ -1,25 +1,3 @@
-// 登場する文字種
-// A-Za-z    => ALPHA
-// 0-9       => DIGIT
-// 小数をどう表現するか
-// A-Za-z0-9 => IDENT
-// +-*/      => OPERATOR
-// SPACE
-// .         => PERIOD
-// (         => OPEN_PAREN
-// )         => CLOSE_PAREN
-// [         => OPEN_BLOCK
-// ]         => CLOSE_BLOCK
-
-// 登場するトークン種別
-// IDENT
-// KEYWORDS ... IDENT としてトークン化したあと判別するべき
-// NUMBER
-// OPEN_PAREN  => (
-// CLOSE_PAREN => )
-// SEPARATOR   => ;
-// COMMA       => ,
-
 var TOKEN_INT = 'int';
 var TOKEN_FLOAT = 'float';
 var TOKEN_IDENT = 'ident';
@@ -28,8 +6,8 @@ var TOKEN_PLUS  = 'plus';
 var TOKEN_MINUS = 'minus';
 var TOKEN_MUL   = 'mul';
 var TOKEN_SLASH = 'slash';
-var TOKEN_DIV   = 'div'; // token としては IDENT として扱う？
-var TOKEN_MOD   = 'mod'; // token としては IDENT として扱う？
+var TOKEN_DIV   = 'div';
+var TOKEN_MOD   = 'mod';
 var TOKEN_OPEN_PAREN  = 'open_paren';
 var TOKEN_CLOSE_PAREN = 'close_paren';
 var TOKEN_SPACE = 'space';
