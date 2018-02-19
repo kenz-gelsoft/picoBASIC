@@ -17,6 +17,17 @@ var TOKEN_EOS = 'eos';
 var TOKEN_STRING = 'string';
 var TOKEN_EXPR = 'expr';
 
+var OPERATOR_TOKENS = {
+    '=': TOKEN_EQUAL,
+    '+': TOKEN_PLUS,
+    '-': TOKEN_MINUS,
+    '*': TOKEN_MUL,
+    '/': TOKEN_SLASH,
+    '(': TOKEN_OPEN_PAREN,
+    ')': TOKEN_CLOSE_PAREN,
+    ',': TOKEN_COMMA,
+};
+
 function isAlpha(c) {
     var code = ASC(c);
     return (ASC('A') <= code && code <= ASC('Z'))
@@ -123,24 +134,11 @@ Tokenizer.prototype = {
             this.state = this.stringState;
             return null;
         }
-        var operators = [
-            ['=', TOKEN_EQUAL],
-            ['+', TOKEN_PLUS],
-            ['-', TOKEN_MINUS],
-            ['*', TOKEN_MUL],
-            ['/', TOKEN_SLASH],
-            ['(', TOKEN_OPEN_PAREN],
-            [')', TOKEN_CLOSE_PAREN],
-            [',', TOKEN_COMMA],
-        ];
-        for (var i = 0; i < operators.length; ++i) {
-            var op    = operators[i][0];
-            var token = operators[i][1];
-            if (op == c) {
-                return token;
-            }
+        var found = OPERATOR_TOKENS[c];
+        if (!found) {
+            throw 'Unexpected token';
         }
-        throw 'Unexpected token';
+        return found;
     },
     
     intOrFloatState: function (c) {

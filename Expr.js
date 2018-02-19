@@ -25,12 +25,10 @@ Expr.prototype = {
                     }
                     break;
                 }
-                var top = opStack.pop();
+                var top = opStack[opStack.length - 1];
                 if (top) {
                     if (this.isStronger(top, t)) {
-                        this.rpn.push(top);
-                    } else {
-                        opStack.push(top);
+                        this.rpn.push(opStack.pop());
                     }
                 }
                 opStack.push(t);
