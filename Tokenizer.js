@@ -62,8 +62,7 @@ function testTokenizer() {
 
 function Tokenizer(aStream) {
     this.stream = aStream;
-    this.token = '';
-    this.state = this.beginState;
+    this.reset();
     this.isEOF = false;
     this.escaped = false;
 }
@@ -83,8 +82,7 @@ Tokenizer.prototype = {
             var type = this.state(c);
             if (type != null) {
                 var value = this.token;
-                this.token = '';
-                this.state = this.beginState;
+                this.reset();
                 return [type, value];
             }
         }
@@ -96,6 +94,11 @@ Tokenizer.prototype = {
         }
         this.stream.back();
         this.token = this.token.substr(0, this.token.length - 1);
+    },
+
+    reset: function () {
+        this.token = '';
+        this.state = this.beginState;
     },
     
     // Tokenizer states
@@ -185,7 +188,7 @@ Tokenizer.prototype = {
             return null;
         }
         this.back();
-        this.state = this.beginState;
+        this.reset();
         return null;
     },
 };
