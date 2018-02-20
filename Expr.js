@@ -22,35 +22,6 @@ Expr.prototype = {
         }
         return this.rpn.length > 0;
     },
-    opState: function (t) {
-        if (!this.isOperator(t)) {
-            this.tr.back();
-            while (this.opStack.length > 0) {
-                this.rpn.push(this.opStack.pop());
-            }
-            return false;
-        }
-        var top = this.opStack[this.opStack.length - 1];
-        if (top) {
-            if (this.isStronger(top, t)) {
-                this.rpn.push(this.opStack.pop());
-            }
-        }
-        this.opStack.push(t);
-        this.state = this.termState;
-        return true;
-    },
-    termState: function (t) {
-        if (!this.isTerm(t)) {
-            throw 'Syntax error:' + t;
-        }
-        this.rpn.push(t);
-        this.state = this.opState;
-        return true;
-    },
-    debug: function (aStr) {
-        document.getElementById('debug').innerHTML += aStr + '\n';
-    },
     toJS: function () {
         var calcStack = [];
         this.debug(this.rpn);
@@ -75,6 +46,42 @@ Expr.prototype = {
         this.debug(js);
         return js;
     },
+    debug: function (aStr) {
+        document.getElementById('debug').innerHTML += aStr + '\n';
+    },
+    
+    // parsing states
+    
+    termState: function (t) {
+        if (!this.isTerm(t)) {
+            throw 'Syntax error:' + t;
+        }
+        this.rpn.push(t);
+        this.state = this.opState;
+        return true;
+    },
+
+    opState: function (t) {
+        if (!this.isOperator(t)) {
+            this.tr.back();
+            while (this.opStack.length > 0) {
+                this.rpn.push(this.opStack.pop());
+            }
+            return false;
+        }
+        var top = this.opStack[this.opStack.length - 1];
+        if (top) {
+            if (this.isStronger(top, t)) {
+                this.rpn.push(this.opStack.pop());
+            }
+        }
+        this.opStack.push(t);
+        this.state = this.termState;
+        return true;
+    },
+    
+    // operator priority
+    
     isStronger: function (aOp1, aOp2) {
         return this.opPriority(aOp1) > this.opPriority(aOp2);
     },
@@ -94,6 +101,9 @@ Expr.prototype = {
             throw 'Invald operator'
         }
     },
+    
+    // token tests
+    
     isTerm: function (aToken) {
         if (aToken == null) {
             return false;
