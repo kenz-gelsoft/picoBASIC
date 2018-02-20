@@ -1,34 +1,13 @@
-// 登場する文字種
-// A-Za-z    => ALPHA
-// 0-9       => DIGIT
-// 小数をどう表現するか
-// A-Za-z0-9 => IDENT
-// +-*/      => OPERATOR
-// SPACE
-// .         => PERIOD
-// (         => OPEN_PAREN
-// )         => CLOSE_PAREN
-// [         => OPEN_BLOCK
-// ]         => CLOSE_BLOCK
-
-// 登場するトークン種別
-// IDENT
-// KEYWORDS ... IDENT としてトークン化したあと判別するべき
-// NUMBER
-// OPEN_PAREN  => (
-// CLOSE_PAREN => )
-// SEPARATOR   => ;
-// COMMA       => ,
-
-var TOKEN_DIGIT = 'digit';
+var TOKEN_INT = 'int';
+var TOKEN_FLOAT = 'float';
 var TOKEN_IDENT = 'ident';
 var TOKEN_EQUAL = 'equal';
 var TOKEN_PLUS  = 'plus';
 var TOKEN_MINUS = 'minus';
 var TOKEN_MUL   = 'mul';
 var TOKEN_SLASH = 'slash';
-var TOKEN_DIV   = 'div'; // token としては IDENT として扱う？
-var TOKEN_MOD   = 'mod'; // token としては IDENT として扱う？
+var TOKEN_DIV   = 'div';
+var TOKEN_MOD   = 'mod';
 var TOKEN_OPEN_PAREN  = 'open_paren';
 var TOKEN_CLOSE_PAREN = 'close_paren';
 var TOKEN_SPACE = 'space';
@@ -36,6 +15,18 @@ var TOKEN_COMMA = 'comma';
 var TOKEN_PERIOD = 'period';
 var TOKEN_EOS = 'eos';
 var TOKEN_STRING = 'string';
+var TOKEN_EXPR = 'expr';
+
+var OPERATOR_TOKENS = {
+    '=': TOKEN_EQUAL,
+    '+': TOKEN_PLUS,
+    '-': TOKEN_MINUS,
+    '*': TOKEN_MUL,
+    '/': TOKEN_SLASH,
+    '(': TOKEN_OPEN_PAREN,
+    ')': TOKEN_CLOSE_PAREN,
+    ',': TOKEN_COMMA,
+};
 
 function isAlpha(c) {
     var code = ASC(c);
@@ -69,8 +60,8 @@ function testTokenizer() {
         PUT(aLine);
         var ss = new StringStream(aLine);
         var tr = new Tokenizer(ss);
-        for (;;) {
-            var t = tr.getNextToken();
+        while (true) {
+            var t = tr.next();
             if (t == null) {
                 break;
             }
@@ -82,53 +73,32 @@ function testTokenizer() {
 
 function Tokenizer(aStream) {
     this.stream = aStream;
-    this.token = '';
-    this.state = this.beginState;
+    this.reset();
     this.isEOF = false;
     this.escaped = false;
 }
 Tokenizer.prototype = {
-    beginState: function (c) {
-        if (c == null) {
-          return TOKEN_EOS;
-        }
-        if (isDigit(c)) {
-            this.state = this.digitState;
+    // returns [type, string]
+    next: function () {
+        if (this.isEOF) {
             return null;
         }
-        if (isIdentStart(c)) {
-            this.state = this.identState;
-            return null;
-        }
-        if (isSpace(c)) {
-            this.state = this.spaceState;
-            return null;
-        }
-        if (c == '"') {
-            this.state = this.stringState;
-            return null;
-        }
-        var operators = [
-            ['=', TOKEN_EQUAL],
-            ['+', TOKEN_PLUS],
-            ['-', TOKEN_MINUS],
-            ['*', TOKEN_MUL],
-            ['/', TOKEN_SLASH],
-            ['(', TOKEN_OPEN_PAREN],
-            [')', TOKEN_CLOSE_PAREN],
-            [',', TOKEN_COMMA],
-            ['.', TOKEN_PERIOD],
-        ];
-        for (var i = 0; i < operators.length; ++i) {
-            var op    = operators[i][0];
-            var token = operators[i][1];
-            if (op == c) {
-                return token;
+        while (true) {
+            var c = this.stream.getc();
+            if (c == null) {
+                this.isEOF = true;
+            } else {
+                this.token += c;
+            }
+            var type = this.state(c);
+            if (type != null) {
+                var value = this.token;
+                this.reset();
+                return [type, value];
             }
         }
-        throw 'Unexpected token';
     },
-    
+
     back: function () {
         if (this.isEOF) {
             return;
@@ -136,13 +106,58 @@ Tokenizer.prototype = {
         this.stream.back();
         this.token = this.token.substr(0, this.token.length - 1);
     },
+
+    reset: function () {
+        this.token = '';
+        this.state = this.beginState;
+    },
     
-    digitState: function (c) {
+    // Tokenizer states
+
+    beginState: function (c) {
+        if (c == null) {
+          return TOKEN_EOS;
+        }
+        if (isDigit(c)) {
+            this.state = this.intOrFloatState;
+            return null;
+        }
+        if (isIdentStart(c)) {
+            this.state = this.identState;
+            return null;
+        }
+        if (isSpace(c)) {
+            this.state = this.skipSpaceState;
+            return null;
+        }
+        if (c == '"') {
+            this.state = this.stringState;
+            return null;
+        }
+        var found = OPERATOR_TOKENS[c];
+        if (!found) {
+            throw 'Unexpected token';
+        }
+        return found;
+    },
+    
+    intOrFloatState: function (c) {
+        if (c == '.') {
+            this.state = this.floatState;
+            return null;
+        }
         if (isDigit(c)) {
             return null;
         }
         this.back();
-        return TOKEN_DIGIT;
+        return TOKEN_INT;
+    },
+    floatState: function (c) {
+        if (isDigit(c)) {
+            return null;
+        }
+        this.back();
+        return TOKEN_FLOAT;
     },
     
     identState: function (c) {
@@ -152,14 +167,6 @@ Tokenizer.prototype = {
         }
         this.back();
         return TOKEN_IDENT;
-    },
-    
-    spaceState: function (c) {
-        if (isSpace(c)) {
-            return null;
-        }
-        this.back();
-        return TOKEN_SPACE;
     },
     
     stringState: function (c) {
@@ -174,33 +181,12 @@ Tokenizer.prototype = {
         return null;
     },
     
-    check: function (c) {
-        var result = this.state(c);
-        if (result != null) {
-            var token = this.token;
-            this.token = '';
-            this.state = this.beginState;
-            return [result, token];
-        }
-        return null;
-    },
-    
-    // returns [type, string]
-    getNextToken: function () {
-        if (this.isEOF) {
+    skipSpaceState: function (c) {
+        if (isSpace(c)) {
             return null;
         }
-        for (;;) {
-            var c = this.stream.getc();
-            if (c == null) {
-                this.isEOF = true;
-                return this.check(null);
-           }
-            this.token += c;
-            var result = this.check(c);
-            if (result != null) {
-                return result;
-            }
-        }
+        this.back();
+        this.reset();
+        return null;
     },
 };

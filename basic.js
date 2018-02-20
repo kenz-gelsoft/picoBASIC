@@ -8,13 +8,13 @@ function main() {
     
     PUT('picoBASIC version 0.0');
     PUT('COPYRIGHT (C) 2018 picoBASIC PROJECT.');
-    PUT('Ok ');
+    PUT('Ok');
 }
 function parseLine(aLine, aPrintOk) {
     var ss = new StringStream(aLine);
     var tr = new Tokenizer(ss);
-    var p = new Parser(tr);
-    p.parse();
+    var s = Statement.parse(tr);
+    eval(s.toJS());
     if (aPrintOk) {
         PUT('Ok');
     }

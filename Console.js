@@ -6,12 +6,13 @@ function Console(aId) {
     var that = this;
     window.addEventListener('keydown', function (event) {
         that.keyDown(event);
-        event.preventDefault();
     }, false);
 }
 Console.prototype = {
     COLS: 80,
     ROWS: 24,
+    
+    DEBUG: true,
 
     clear: function () {
         this.buffer = this.chars(' ', this.COLS * this.ROWS);
@@ -28,7 +29,7 @@ Console.prototype = {
         }
         var pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
-        this.debug();
+        //this.debug();
     },
     scroll: function () {
         this.buffer = this.buffer.substring(this.COLS);
@@ -54,6 +55,7 @@ Console.prototype = {
         document.getElementById('debug').innerHTML = msg;
     },
     print: function (aString, aNewLine, aInsert) {
+        aString = aString.toString();
         var max = this.ROWS * this.COLS;
         var n = aInsert ? 0 : aString.length;
         var front = this.buffer.substring(0, this.cursor);
@@ -89,7 +91,28 @@ Console.prototype = {
     getCursorLine: function () {
         return this.buffer.substr(this.COLS * this.getY(), this.COLS);
     },
+    parseLine: function (aLine) {
+        if (this.DEBUG) {
+            parseLine(aLine, true);
+            return;
+        }
+        try {
+            parseLine(line, true);
+        } catch (e) {
+            PUT('Syntax error');
+        }
+    },
     keyDown: function (aEvent) {
+        var keysToIgnore = [
+            'Shift', 'Dead',
+            'Alt', 'Control',
+            'F5'
+        ];
+        if (aEvent.getModifierState('Alt') ||
+            aEvent.getModifierState('Control') ||
+            keysToIgnore.includes(aEvent.key)) {
+            return;
+        }
         switch (aEvent.key) {
         case 'ArrowUp':
         case 'UIKeyInputUpArrow':
@@ -110,22 +133,16 @@ Console.prototype = {
         case 'Enter':
             var line = this.getCursorLine();
             this.print('', true);
-            try {
-                parseLine(line, true);
-            } catch (e) {
-                PUT('Syntax error')
-            }
+            this.parseLine(line);
             break;
         case 'Backspace':
             if (this.getX() > 0) {
                 this.backspace();
             }
             break;
-        case 'Shift':
-        case 'Dead':
-            break;
         default:
             this.print(aEvent.key, false, true);
         }
+        aEvent.preventDefault();
     },
 };
