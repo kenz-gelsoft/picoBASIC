@@ -53,6 +53,10 @@ Expr.prototype = {
     // parsing states
     
     termState: function (t) {
+        if (t[0] == TOKEN_OPEN_PAREN) {
+            this.opStack.push(t);
+            return true;
+        }
         if (!this.isTerm(t)) {
             throw 'Syntax error:' + t;
         }
@@ -62,6 +66,16 @@ Expr.prototype = {
     },
 
     opState: function (t) {
+        if (t[0] == TOKEN_CLOSE_PAREN) {
+            while (this.opStack.length > 0) {
+                var top = this.opStack.pop();
+                if (top[0] == TOKEN_OPEN_PAREN) {
+                    return true;
+                }
+                this.rpn.push(top);
+            }
+            throw 'Parenthesis mismatch';
+        }
         if (!this.isOperator(t)) {
             this.tr.back();
             while (this.opStack.length > 0) {
@@ -69,15 +83,16 @@ Expr.prototype = {
             }
             return false;
         }
-        var top = this.opStack[this.opStack.length - 1];
-        if (top) {
-            if (this.isStronger(top, t)) {
-                this.rpn.push(this.opStack.pop());
-            }
+        var top = this.peek();
+        if (top && this.isStronger(top, t)) {
+            this.rpn.push(this.opStack.pop());
         }
         this.opStack.push(t);
         this.state = this.termState;
         return true;
+    },
+    peek: function () {
+        return this.opStack[this.opStack.length - 1];
     },
     
     // operator priority
@@ -89,16 +104,18 @@ Expr.prototype = {
         switch (aOp[0]) {
         case TOKEN_MUL:
         case TOKEN_SLASH:
-            return 3;
+            return 4;
         case TOKEN_PLUS:
         case TOKEN_MINUS:
-            return 2;
+            return 3;
         case TOKEN_DIV:
-            return 1;
+            return 2;
         case TOKEN_MOD:
+            return 1;
+        case TOKEN_OPEN_PAREN:
             return 0;
         default:
-            throw 'Invald operator'
+            throw 'Invald operator: ' + aOp;
         }
     },
     
