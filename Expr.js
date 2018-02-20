@@ -11,36 +11,42 @@ Expr.parse = function (tr) {
 };
 Expr.prototype = {
     parse: function () {
-        var opStack = [];
-        
-        var waitingOperator = false;
+        this.opStack = [];
+        this.state = this.termState;
         while (true) {
             var t = this.tr.next();
             this.debug(t);
-            if (waitingOperator) {
-                if (!this.isOperator(t)) {
-                    this.tr.back();
-                    while (opStack.length > 0) {
-                        this.rpn.push(opStack.pop());
-                    }
-                    break;
-                }
-                var top = opStack[opStack.length - 1];
-                if (top) {
-                    if (this.isStronger(top, t)) {
-                        this.rpn.push(opStack.pop());
-                    }
-                }
-                opStack.push(t);
-            } else {
-                if (!this.isTerm(t)) {
-                    throw 'Syntax error:' + t;
-                }
-                this.rpn.push(t);
+            if (!this.state.apply(this, [t])) {
+                break;
             }
-            waitingOperator = !waitingOperator;
         }
         return this.rpn.length > 0;
+    },
+    opState: function (t) {
+        if (!this.isOperator(t)) {
+            this.tr.back();
+            while (this.opStack.length > 0) {
+                this.rpn.push(this.opStack.pop());
+            }
+            return false;
+        }
+        var top = this.opStack[this.opStack.length - 1];
+        if (top) {
+            if (this.isStronger(top, t)) {
+                this.rpn.push(this.opStack.pop());
+            }
+        }
+        this.opStack.push(t);
+        this.state = this.termState;
+        return true;
+    },
+    termState: function (t) {
+        if (!this.isTerm(t)) {
+            throw 'Syntax error:' + t;
+        }
+        this.rpn.push(t);
+        this.state = this.opState;
+        return true;
     },
     debug: function (aStr) {
         document.getElementById('debug').innerHTML += aStr + '\n';
