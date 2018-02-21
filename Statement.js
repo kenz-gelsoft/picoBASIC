@@ -23,6 +23,9 @@ Statement.prototype = {
             if (t2) {
                 throw 'Syntax error';
             }
+            break;
+        default:
+            throw 'Syntax error';
         }
     },
     toJS: function () {
