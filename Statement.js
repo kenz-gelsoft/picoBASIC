@@ -13,7 +13,12 @@ Statement.prototype = {
         switch (t[0]) {
         case TOKEN_IDENT:
             var s = t[1].toUpperCase();
-            this.js = this[s].apply(this);
+            var st = this[s];
+            if (st == null) {
+                this.tr.back();
+                st = this.LET;
+            }
+            this.js = st.apply(this);
             var t2 = this.tr.next();
             if (t2) {
                 throw 'Syntax error';
@@ -25,6 +30,18 @@ Statement.prototype = {
     },
 
     // BASIC statements
+    LET: function () {
+        var varName = this.tr.next();
+        var eq = this.tr.next();
+        var val = Expr.parse(this.tr);
+        if (varName[0] != TOKEN_IDENT ||
+            eq[0] != TOKEN_EQUAL ||
+            val == null) {
+            throw 'Syntax error';
+        }
+       return varName[1] + '=' + val.toJS();
+    },
+    
     CLS: function () {
         return 'CLS();';
     },
