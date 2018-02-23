@@ -103,13 +103,18 @@ Console.prototype = {
         }
     },
     keyDown: function (aEvent) {
-        var keysToIgnore = [
-            'Shift', 'Dead',
-            'Alt', 'Control',
-            'F5'
+        var modifiersToIgnore = [
+            'Alt', 'Control', 'Meta',
         ];
-        if (aEvent.getModifierState('Alt') ||
-            aEvent.getModifierState('Control') ||
+        var keysToIgnore = [
+            'Shift', 'Dead', 'F5',
+        ];
+        for (modifier of modifiersToIgnore) {
+            if (aEvent.getModifierState(modifier)) {
+                return;
+            }
+        }
+        if (modifiersToIgnore.includes(aEvent.key) ||
             keysToIgnore.includes(aEvent.key)) {
             return;
         }
