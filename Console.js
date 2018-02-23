@@ -4,7 +4,7 @@ class Console {
         this.cursor = 0;
         this.clear();
         
-        var that = this;
+        const that = this;
         window.addEventListener('keydown', function (event) {
             that.keyDown(event);
         }, false);
@@ -23,11 +23,11 @@ class Console {
         while (this.getY() >= this.ROWS) {
             this.scroll();
         }
-        var lines = [];
-        for (var i = 0; i < this.ROWS; ++i) {
+        const lines = [];
+        for (let i = 0; i < this.ROWS; ++i) {
             lines.push(this.buffer.substr(i * this.COLS, this.COLS));
         }
-        var pre = document.getElementById(this.id);
+        const pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
         //this.debug();
     }
@@ -37,15 +37,15 @@ class Console {
         this.cursor -= this.COLS;
     }
     chars(char, count) {
-        var s = '';
-        for (var i = 0; i < count; ++i) {
+        let s = '';
+        for (let i = 0; i < count; ++i) {
             s += char;
         }
         return s;
     }
     debug() {
-        var msg = '';
-        var items = [
+        let msg = '';
+        const items = [
             ['cursor', this.cursor],
             ['x', this.getX()],
             ['y', this.getY()],
@@ -56,10 +56,10 @@ class Console {
     }
     print(aString, aNewLine, aInsert) {
         aString = aString.toString();
-        var max = this.ROWS * this.COLS;
-        var n = aInsert ? 0 : aString.length;
-        var front = this.buffer.substring(0, this.cursor);
-        var rear  = this.buffer.substring(this.cursor + n, max);
+        const max = this.ROWS * this.COLS;
+        const n = aInsert ? 0 : aString.length;
+        const front = this.buffer.substring(0, this.cursor);
+        const rear  = this.buffer.substring(this.cursor + n, max);
         this.buffer = front + aString + rear;
         if (aInsert) {
             this.buffer = this.buffer.substring(0, max);
@@ -73,9 +73,9 @@ class Console {
     }
     backspace() {
         --this.cursor;
-        var max = this.ROWS * this.COLS;
-        var front = this.buffer.substring(0, this.cursor);
-        var rear  = this.buffer.substring(this.cursor + 1, max);
+        const max = this.ROWS * this.COLS;
+        const front = this.buffer.substring(0, this.cursor);
+        const rear  = this.buffer.substring(this.cursor + 1, max);
         this.buffer = front + ' ' + rear;
         this.update();
     }
@@ -103,13 +103,13 @@ class Console {
         }
     }
     keyDown(aEvent) {
-        var modifiersToIgnore = [
+        const modifiersToIgnore = [
             'Alt', 'Control', 'Meta',
         ];
-        var keysToIgnore = [
+        const keysToIgnore = [
             'Shift', 'Dead', 'F5',
         ];
-        for (var modifier of modifiersToIgnore) {
+        for (const modifier of modifiersToIgnore) {
             if (aEvent.getModifierState(modifier)) {
                 return;
             }
@@ -136,7 +136,7 @@ class Console {
             //this.locate(this.getX(), this.getY() + 1);
             break;
         case 'Enter':
-            var line = this.getCursorLine();
+            const line = this.getCursorLine();
             this.print('', true);
             this.parseLine(line);
             break;

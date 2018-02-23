@@ -4,7 +4,7 @@ class Expr {
         this.rpn = [];
     }
     static parse(tr) {
-        var e = new Expr(tr);
+        const e = new Expr(tr);
         if (!e.parse()) {
             return null;
         }
@@ -14,7 +14,7 @@ class Expr {
         this.opStack = [];
         this.state = this.termState;
         while (true) {
-            var t = this.tr.next();
+            const t = this.tr.next();
             this.debug(t);
             if (!this.state.apply(this, [t])) {
                 break;
@@ -23,26 +23,26 @@ class Expr {
         return this.rpn.length > 0;
     }
     toJS() {
-        var calcStack = [];
+        const calcStack = [];
         this.debug(this.rpn);
         while (true) {
-            var t = this.rpn.shift();
+            const t = this.rpn.shift();
             if (!t) {
                 break;
             }
             if (this.isOperator(t)) {
                 this.debug('token: ' + t);
                 this.debug('calcStack: ' + calcStack);
-                var rhs = calcStack.pop();
-                var lhs = calcStack.pop();
-                var js = ['(', lhs[1], t[1], rhs[1], ')'].join('');
+                const rhs = calcStack.pop();
+                const lhs = calcStack.pop();
+                const js = ['(', lhs[1], t[1], rhs[1], ')'].join('');
                 calcStack.push(['expr', js]);
             } else {
                 calcStack.push(t);
             }
         }
         this.debug(calcStack);
-        var js = calcStack.pop()[1];
+        const js = calcStack.pop()[1];
         this.debug(js);
         return js;
     }
@@ -68,7 +68,7 @@ class Expr {
     opState(t) {
         if (t[0] == TOKEN_CLOSE_PAREN) {
             while (this.opStack.length > 0) {
-                var top = this.opStack.pop();
+                const top = this.opStack.pop();
                 if (top[0] == TOKEN_OPEN_PAREN) {
                     return true;
                 }
@@ -83,7 +83,7 @@ class Expr {
             }
             return false;
         }
-        var top = this.peek();
+        const top = this.peek();
         if (top && this.isStronger(top, t)) {
             this.rpn.push(this.opStack.pop());
         }

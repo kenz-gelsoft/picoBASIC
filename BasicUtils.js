@@ -1,4 +1,3 @@
-var console = null;
 function CLS() {
     console.clear();
 }

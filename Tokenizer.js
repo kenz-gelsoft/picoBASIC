@@ -1,23 +1,23 @@
-var TOKEN_INT = 'int';
-var TOKEN_FLOAT = 'float';
-var TOKEN_IDENT = 'ident';
-var TOKEN_EQUAL = 'equal';
-var TOKEN_PLUS  = 'plus';
-var TOKEN_MINUS = 'minus';
-var TOKEN_MUL   = 'mul';
-var TOKEN_SLASH = 'slash';
-var TOKEN_DIV   = 'div';
-var TOKEN_MOD   = 'mod';
-var TOKEN_OPEN_PAREN  = 'open_paren';
-var TOKEN_CLOSE_PAREN = 'close_paren';
-var TOKEN_SPACE = 'space';
-var TOKEN_COMMA = 'comma';
-var TOKEN_PERIOD = 'period';
-var TOKEN_EOS = 'eos';
-var TOKEN_STRING = 'string';
-var TOKEN_EXPR = 'expr';
+const TOKEN_INT = 'int';
+const TOKEN_FLOAT = 'float';
+const TOKEN_IDENT = 'ident';
+const TOKEN_EQUAL = 'equal';
+const TOKEN_PLUS  = 'plus';
+const TOKEN_MINUS = 'minus';
+const TOKEN_MUL   = 'mul';
+const TOKEN_SLASH = 'slash';
+const TOKEN_DIV   = 'div';
+const TOKEN_MOD   = 'mod';
+const TOKEN_OPEN_PAREN  = 'open_paren';
+const TOKEN_CLOSE_PAREN = 'close_paren';
+const TOKEN_SPACE = 'space';
+const TOKEN_COMMA = 'comma';
+const TOKEN_PERIOD = 'period';
+const TOKEN_EOS = 'eos';
+const TOKEN_STRING = 'string';
+const TOKEN_EXPR = 'expr';
 
-var OPERATOR_TOKENS = {
+const OPERATOR_TOKENS = {
     '=': TOKEN_EQUAL,
     '+': TOKEN_PLUS,
     '-': TOKEN_MINUS,
@@ -29,7 +29,7 @@ var OPERATOR_TOKENS = {
 };
 
 function isAlpha(c) {
-    var code = ASC(c);
+    const code = ASC(c);
     return (ASC('A') <= code && code <= ASC('Z'))
         || (ASC('a') <= code && code <= ASC('z'));
 }
@@ -37,7 +37,7 @@ function isIdentStart(c) {
     return c == '_' || isAlpha(c);
 }
 function isDigit(c) {
-    var num = ASC(c) - ASC('0');
+    const num = ASC(c) - ASC('0');
     return 0 <= num && num <= 9;
 }
 function isSpace(c) {
@@ -45,7 +45,7 @@ function isSpace(c) {
 }
 
 function testTokenizer() {
-    var tests = [
+    const tests = [
         'PRINT"HELLO \\\"WORLD\\\""',
         'PRINT"HELLO"',
         '123,',
@@ -58,10 +58,10 @@ function testTokenizer() {
     ];
     tests.forEach(function (aLine) {
         PUT(aLine);
-        var ss = new StringStream(aLine);
-        var tr = new Tokenizer(ss);
+        const ss = new StringStream(aLine);
+        const tr = new Tokenizer(ss);
         while (true) {
-            var t = tr.next();
+            const t = tr.next();
             if (t == null) {
                 break;
             }
@@ -85,15 +85,15 @@ class Tokenizer {
             return null;
         }
         while (true) {
-            var c = this.stream.getc();
+            const c = this.stream.getc();
             if (c == null) {
                 this.isEOF = true;
             } else {
                 this.token += c;
             }
-            var type = this.state(c);
+            const type = this.state(c);
             if (type != null) {
-                var value = this.token;
+                const value = this.token;
                 this.reset();
                 return [type, value];
             }
@@ -135,7 +135,7 @@ class Tokenizer {
             this.state = this.stringState;
             return null;
         }
-        var found = OPERATOR_TOKENS[c];
+        const found = OPERATOR_TOKENS[c];
         if (!found) {
             throw 'Unexpected token';
         }

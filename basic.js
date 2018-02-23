@@ -2,7 +2,7 @@ window.addEventListener('load', function () {
     main();
 }, false);
 
-var console = null;
+let console = null;
 function main() {
     console = new Console('console');
     
@@ -11,9 +11,9 @@ function main() {
     PUT('Ok');
 }
 function parseLine(aLine, aPrintOk) {
-    var ss = new StringStream(aLine);
-    var tr = new Tokenizer(ss);
-    var s = Statement.parse(tr);
+    const ss = new StringStream(aLine);
+    const tr = new Tokenizer(ss);
+    const s = Statement.parse(tr);
     eval(s.toJS());
     if (aPrintOk) {
         PUT('Ok');
