@@ -71,15 +71,16 @@ function testTokenizer() {
     });
 }
 
-function Tokenizer(aStream) {
-    this.stream = aStream;
-    this.reset();
-    this.isEOF = false;
-    this.escaped = false;
-}
-Tokenizer.prototype = {
+class Tokenizer {
+    constructor(aStream) {
+        this.stream = aStream;
+        this.reset();
+        this.isEOF = false;
+        this.escaped = false;
+    }
+
     // returns [type, string]
-    next: function () {
+    next() {
         if (this.isEOF) {
             return null;
         }
@@ -97,24 +98,24 @@ Tokenizer.prototype = {
                 return [type, value];
             }
         }
-    },
+    }
 
-    back: function () {
+    back() {
         if (this.isEOF) {
             return;
         }
         this.stream.back();
         this.token = this.token.substr(0, this.token.length - 1);
-    },
+    }
 
-    reset: function () {
+    reset() {
         this.token = '';
         this.state = this.beginState;
-    },
+    }
     
     // Tokenizer states
 
-    beginState: function (c) {
+    beginState(c) {
         if (c == null) {
           return TOKEN_EOS;
         }
@@ -139,9 +140,9 @@ Tokenizer.prototype = {
             throw 'Unexpected token';
         }
         return found;
-    },
+    }
     
-    intOrFloatState: function (c) {
+    intOrFloatState(c) {
         if (c == '.') {
             this.state = this.floatState;
             return null;
@@ -151,25 +152,25 @@ Tokenizer.prototype = {
         }
         this.back();
         return TOKEN_INT;
-    },
-    floatState: function (c) {
+    }
+    floatState(c) {
         if (isDigit(c)) {
             return null;
         }
         this.back();
         return TOKEN_FLOAT;
-    },
+    }
     
-    identState: function (c) {
+    identState(c) {
         if (isIdentStart(c) ||
             isDigit(c)) {
             return null;
         }
         this.back();
         return TOKEN_IDENT;
-    },
+    }
     
-    stringState: function (c) {
+    stringState(c) {
         if (c == '\\') {
             this.escaped = true;
             return null;
@@ -179,14 +180,14 @@ Tokenizer.prototype = {
         }
         this.escaped = false;
         return null;
-    },
+    }
     
-    skipSpaceState: function (c) {
+    skipSpaceState(c) {
         if (isSpace(c)) {
             return null;
         }
         this.back();
         this.reset();
         return null;
-    },
-};
+    }
+}

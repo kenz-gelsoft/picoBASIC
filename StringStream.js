@@ -1,15 +1,15 @@
-function StringStream(aString) {
-    this.string = aString;
-    this.index = 0;
-}
-StringStream.prototype = {
-    getc: function () {
+class StringStream {
+    constructor(aString) {
+        this.string = aString;
+        this.index = 0;
+    }
+    getc() {
         if (this.string.length == this.index) {
             return null; // EOF
         }
         return this.string.charAt(this.index++);
-    },
-    back: function () {
+    }
+    back() {
         this.index--;
-    },
-};
+    }
+}

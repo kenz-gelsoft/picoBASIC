@@ -1,16 +1,16 @@
-function Expr(aTokenizer) {
-    this.tr = aTokenizer;
-    this.rpn = [];
-}
-Expr.parse = function (tr) {
-    var e = new Expr(tr);
-    if (!e.parse()) {
-        return null;
+class Expr {
+    constructor(aTokenizer) {
+        this.tr = aTokenizer;
+        this.rpn = [];
     }
-    return e;
-};
-Expr.prototype = {
-    parse: function () {
+    static parse(tr) {
+        var e = new Expr(tr);
+        if (!e.parse()) {
+            return null;
+        }
+        return e;
+    }
+    parse() {
         this.opStack = [];
         this.state = this.termState;
         while (true) {
@@ -21,8 +21,8 @@ Expr.prototype = {
             }
         }
         return this.rpn.length > 0;
-    },
-    toJS: function () {
+    }
+    toJS() {
         var calcStack = [];
         this.debug(this.rpn);
         while (true) {
@@ -45,14 +45,14 @@ Expr.prototype = {
         var js = calcStack.pop()[1];
         this.debug(js);
         return js;
-    },
-    debug: function (aStr) {
+    }
+    debug(aStr) {
         document.getElementById('debug').innerHTML += aStr + '\n';
-    },
+    }
     
     // parsing states
     
-    termState: function (t) {
+    termState(t) {
         if (t[0] == TOKEN_OPEN_PAREN) {
             this.opStack.push(t);
             return true;
@@ -63,9 +63,9 @@ Expr.prototype = {
         this.rpn.push(t);
         this.state = this.opState;
         return true;
-    },
+    }
 
-    opState: function (t) {
+    opState(t) {
         if (t[0] == TOKEN_CLOSE_PAREN) {
             while (this.opStack.length > 0) {
                 var top = this.opStack.pop();
@@ -90,17 +90,17 @@ Expr.prototype = {
         this.opStack.push(t);
         this.state = this.termState;
         return true;
-    },
-    peek: function () {
+    }
+    peek() {
         return this.opStack[this.opStack.length - 1];
-    },
+    }
     
     // operator priority
     
-    isStronger: function (aOp1, aOp2) {
+    isStronger(aOp1, aOp2) {
         return this.opPriority(aOp1) > this.opPriority(aOp2);
-    },
-    opPriority: function (aOp) {
+    }
+    opPriority(aOp) {
         switch (aOp[0]) {
         case TOKEN_MUL:
         case TOKEN_SLASH:
@@ -117,11 +117,11 @@ Expr.prototype = {
         default:
             throw 'Invald operator: ' + aOp;
         }
-    },
+    }
     
     // token tests
     
-    isTerm: function (aToken) {
+    isTerm(aToken) {
         if (aToken == null) {
             return false;
         }
@@ -134,8 +134,8 @@ Expr.prototype = {
             return true;
         }
         return false;
-    },
-    isOperator: function (aToken) {
+    }
+    isOperator(aToken) {
         if (aToken == null) {
             return false;
         }
@@ -149,5 +149,5 @@ Expr.prototype = {
             return true;
         }
         return false;
-    },
-};
+    }
+}

@@ -1,25 +1,25 @@
-function Console(aId) {
-    this.id = aId;
-    this.cursor = 0;
-    this.clear();
-    
-    var that = this;
-    window.addEventListener('keydown', function (event) {
-        that.keyDown(event);
-    }, false);
-}
-Console.prototype = {
-    COLS: 80,
-    ROWS: 24,
-    
-    DEBUG: true,
+class Console {
+    constructor(aId) {
+        this.id = aId;
+        this.cursor = 0;
+        this.clear();
+        
+        var that = this;
+        window.addEventListener('keydown', function (event) {
+            that.keyDown(event);
+        }, false);
+    }
+    get COLS()  { return 80; }
+    get ROWS()  { return 24; }
 
-    clear: function () {
+    get DEBUG() { return true; }
+
+    clear() {
         this.buffer = this.chars(' ', this.COLS * this.ROWS);
         this.cursor = 0;
         this.update();
-    },
-    update: function () {
+    }
+    update() {
         while (this.getY() >= this.ROWS) {
             this.scroll();
         }
@@ -30,20 +30,20 @@ Console.prototype = {
         var pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
         //this.debug();
-    },
-    scroll: function () {
+    }
+    scroll() {
         this.buffer = this.buffer.substring(this.COLS);
         this.buffer += this.chars(' ', this.COLS);
         this.cursor -= this.COLS;
-    },
-    chars: function (char, count) {
+    }
+    chars(char, count) {
         var s = '';
         for (var i = 0; i < count; ++i) {
             s += char;
         }
         return s;
-    },
-    debug: function () {
+    }
+    debug() {
         var msg = '';
         var items = [
             ['cursor', this.cursor],
@@ -53,8 +53,8 @@ Console.prototype = {
             msg += item.join('=') + '\n';
         });
         document.getElementById('debug').innerHTML = msg;
-    },
-    print: function (aString, aNewLine, aInsert) {
+    }
+    print(aString, aNewLine, aInsert) {
         aString = aString.toString();
         var max = this.ROWS * this.COLS;
         var n = aInsert ? 0 : aString.length;
@@ -70,28 +70,28 @@ Console.prototype = {
             this.cursor += aString.length;
         }
         this.update();
-    },
-    backspace: function () {
+    }
+    backspace() {
         --this.cursor;
         var max = this.ROWS * this.COLS;
         var front = this.buffer.substring(0, this.cursor);
         var rear  = this.buffer.substring(this.cursor + 1, max);
         this.buffer = front + ' ' + rear;
         this.update();
-    },
-    getX: function () {
+    }
+    getX() {
         return this.cursor % this.COLS;
-    },
-    getY: function () {
+    }
+    getY() {
         return (this.cursor / this.COLS) | 0;
-    },
-    locate: function (x, y) {
+    }
+    locate(x, y) {
         this.cursor = x + y * this.COLS;
-    },
-    getCursorLine: function () {
+    }
+    getCursorLine() {
         return this.buffer.substr(this.COLS * this.getY(), this.COLS);
-    },
-    parseLine: function (aLine) {
+    }
+    parseLine(aLine) {
         if (this.DEBUG) {
             parseLine(aLine, true);
             return;
@@ -101,15 +101,15 @@ Console.prototype = {
         } catch (e) {
             PUT('Syntax error');
         }
-    },
-    keyDown: function (aEvent) {
+    }
+    keyDown(aEvent) {
         var modifiersToIgnore = [
             'Alt', 'Control', 'Meta',
         ];
         var keysToIgnore = [
             'Shift', 'Dead', 'F5',
         ];
-        for (modifier of modifiersToIgnore) {
+        for (var modifier of modifiersToIgnore) {
             if (aEvent.getModifierState(modifier)) {
                 return;
             }
@@ -149,5 +149,5 @@ Console.prototype = {
             this.print(aEvent.key, false, true);
         }
         aEvent.preventDefault();
-    },
-};
+    }
+}
