@@ -4,9 +4,8 @@ class Console {
         this.cursor = 0;
         this.clear();
         
-        const that = this;
-        window.addEventListener('keydown', function (event) {
-            that.keyDown(event);
+        window.addEventListener('keydown', (event) => {
+            this.keyDown(event);
         }, false);
     }
     get COLS()  { return 80; }
@@ -49,7 +48,7 @@ class Console {
             ['cursor', this.cursor],
             ['x', this.getX()],
             ['y', this.getY()],
-        ].forEach(function (item) {
+        ].forEach((item) => {
             msg += item.join('=') + '\n';
         });
         document.getElementById('debug').innerHTML = msg;

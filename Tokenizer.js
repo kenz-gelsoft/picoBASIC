@@ -56,7 +56,7 @@ function testTokenizer() {
         'SCREEN 1, 2',
         'LINE (20,40)-(50,50),3',
     ];
-    tests.forEach(function (aLine) {
+    tests.forEach((aLine) => {
         PUT(aLine);
         const ss = new StringStream(aLine);
         const tr = new Tokenizer(ss);
