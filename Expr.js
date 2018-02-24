@@ -31,11 +31,11 @@ class Expr {
                 break;
             }
             if (this.isOperator(t)) {
-                this.debug('token: ' + t);
-                this.debug('calcStack: ' + calcStack);
+                this.debug(`token: ${t}`);
+                this.debug(`calcStack: ${calcStack}`);
                 const rhs = calcStack.pop();
                 const lhs = calcStack.pop();
-                const js = ['(', lhs[1], t[1], rhs[1], ')'].join('');
+                const js = `(${lhs[1]} ${t[1]} ${rhs[1]})`;
                 calcStack.push(['expr', js]);
             } else {
                 calcStack.push(t);
@@ -47,7 +47,7 @@ class Expr {
         return js;
     }
     debug(aStr) {
-        document.getElementById('debug').innerHTML += aStr + '\n';
+        document.getElementById('debug').innerHTML += `${aStr}\n`;
     }
     
     // parsing states
@@ -58,7 +58,7 @@ class Expr {
             return true;
         }
         if (!this.isTerm(t)) {
-            throw 'Syntax error:' + t;
+            throw `Syntax error: ${t}`;
         }
         this.rpn.push(t);
         this.state = this.opState;
@@ -115,7 +115,7 @@ class Expr {
         case TOKEN_OPEN_PAREN:
             return 0;
         default:
-            throw 'Invald operator: ' + aOp;
+            throw `Invald operator: ${aOp}`;
         }
     }
     

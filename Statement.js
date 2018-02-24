@@ -42,7 +42,7 @@ class Statement {
             val == null) {
             throw 'Syntax error';
         }
-       return varName[1] + '=' + val.toJS();
+       return `${varName[1]} = ${val.toJS()};`;
     }
     
     CLS() {
@@ -53,7 +53,7 @@ class Statement {
         if (!expr) {
             throw 'Syntax error';
         }
-        return 'PUT(' + expr.toJS() + ');';
+        return `PUT(${expr.toJS()});`;
     }
     LOCATE() {
         const t2 = this.tr.next();
@@ -64,6 +64,6 @@ class Statement {
             t4[0] != TOKEN_INT) {
             throw 'Syntax error';
         }
-        return 'LOCATE(' + t2[1] + ',' + t4[1] + ')';
+        return `LOCATE(${t2[1]}, ${t4[1]});`;
     }
 }
