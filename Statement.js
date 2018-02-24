@@ -10,9 +10,9 @@ class Statement {
     }
     parse() {
         const t = this.tr.next();
-        switch (t[0]) {
-        case TOKEN_IDENT:
-            const s = t[1].toUpperCase();
+        switch (t.type) {
+        case Token.IDENT:
+            const s = t.string.toUpperCase();
             let st = this[s];
             if (st == null) {
                 this.tr.back();
@@ -21,7 +21,7 @@ class Statement {
             this.js = st.apply(this);
             const t2 = this.tr.next();
             //this.debug(t2);
-            if (t2 && t2[0] != TOKEN_EOS) {
+            if (t2 && t2.type != Token.EOS) {
                 throw 'Syntax error';
             }
             break;
@@ -42,12 +42,12 @@ class Statement {
         const varName = this.tr.next();
         const eq = this.tr.next();
         const val = Expr.parse(this.tr);
-        if (varName[0] != TOKEN_IDENT ||
-            eq[0] != TOKEN_EQUAL ||
+        if (varName.type != Token.IDENT ||
+            eq.type != Token.EQUAL ||
             val == null) {
             throw 'Syntax error';
         }
-       return `${varName[1]} = ${val.toJS()};`;
+       return `${varName.string} = ${val.toJS()};`;
     }
     
     CLS() {
@@ -64,11 +64,11 @@ class Statement {
         const t2 = this.tr.next();
         const t3 = this.tr.next();
         const t4 = this.tr.next();
-        if (t2[0] != TOKEN_INT ||
-            t3[0] != TOKEN_COMMA ||
-            t4[0] != TOKEN_INT) {
+        if (t2.type != Token.INT ||
+            t3.type != Token.COMMA ||
+            t4.type != Token.INT) {
             throw 'Syntax error';
         }
-        return `LOCATE(${t2[1]}, ${t4[1]});`;
+        return `LOCATE(${t2.string}, ${t4.string});`;
     }
 }

@@ -30,19 +30,19 @@ class Expr {
             if (!t) {
                 break;
             }
-            if (this.isOperator(t)) {
+            if (t.isOperator()) {
                 this.debug(`token: ${t}`);
                 this.debug(`calcStack: ${calcStack}`);
                 const rhs = calcStack.pop();
                 const lhs = calcStack.pop();
-                const js = `(${lhs[1]} ${t[1]} ${rhs[1]})`;
-                calcStack.push(['expr', js]);
+                const js = `(${lhs.string} ${t.string} ${rhs.string})`;
+                calcStack.push(new Token('expr', js));
             } else {
                 calcStack.push(t);
             }
         }
         this.debug(calcStack);
-        const js = calcStack.pop()[1];
+        const js = calcStack.pop().string;
         this.debug(js);
         return js;
     }
@@ -53,11 +53,11 @@ class Expr {
     // parsing states
     
     termState(t) {
-        if (t[0] == TOKEN_OPEN_PAREN) {
+        if (t.type == Token.OPEN_PAREN) {
             this.opStack.push(t);
             return true;
         }
-        if (!this.isTerm(t)) {
+        if (!t.isTerm()) {
             throw `Syntax error: ${t}`;
         }
         this.rpn.push(t);
@@ -66,17 +66,17 @@ class Expr {
     }
 
     opState(t) {
-        if (t[0] == TOKEN_CLOSE_PAREN) {
+        if (t.type == Token.CLOSE_PAREN) {
             while (this.opStack.length > 0) {
                 const top = this.opStack.pop();
-                if (top[0] == TOKEN_OPEN_PAREN) {
+                if (top.type == Token.OPEN_PAREN) {
                     return true;
                 }
                 this.rpn.push(top);
             }
             throw 'Parenthesis mismatch';
         }
-        if (!this.isOperator(t)) {
+        if (!t.isOperator()) {
             this.tr.back();
             while (this.opStack.length > 0) {
                 this.rpn.push(this.opStack.pop());
@@ -84,7 +84,7 @@ class Expr {
             return false;
         }
         const top = this.peek();
-        if (top && this.isStronger(top, t)) {
+        if (top && top.isStronger(t)) {
             this.rpn.push(this.opStack.pop());
         }
         this.opStack.push(t);
@@ -93,61 +93,5 @@ class Expr {
     }
     peek() {
         return this.opStack[this.opStack.length - 1];
-    }
-    
-    // operator priority
-    
-    isStronger(aOp1, aOp2) {
-        return this.opPriority(aOp1) > this.opPriority(aOp2);
-    }
-    opPriority(aOp) {
-        switch (aOp[0]) {
-        case TOKEN_MUL:
-        case TOKEN_SLASH:
-            return 4;
-        case TOKEN_PLUS:
-        case TOKEN_MINUS:
-            return 3;
-        case TOKEN_DIV:
-            return 2;
-        case TOKEN_MOD:
-            return 1;
-        case TOKEN_OPEN_PAREN:
-            return 0;
-        default:
-            throw `Invald operator: ${aOp}`;
-        }
-    }
-    
-    // token tests
-    
-    isTerm(aToken) {
-        if (aToken == null) {
-            return false;
-        }
-        switch (aToken[0]) {
-        case TOKEN_IDENT:
-        case TOKEN_INT:
-        case TOKEN_FLOAT:
-        case TOKEN_STRING:
-        case TOKEN_EXPR:
-            return true;
-        }
-        return false;
-    }
-    isOperator(aToken) {
-        if (aToken == null) {
-            return false;
-        }
-        switch (aToken[0]) {
-        case TOKEN_PLUS:
-        case TOKEN_MINUS:
-        case TOKEN_MUL:
-        case TOKEN_SLASH:
-        case TOKEN_DIV:
-        case TOKEN_MOD:
-            return true;
-        }
-        return false;
     }
 }
