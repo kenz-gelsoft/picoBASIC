@@ -53,7 +53,7 @@ class Console {
         });
         document.getElementById('debug').innerHTML = msg;
     }
-    print(aString, aNewLine, aInsert) {
+    print(aString, aNewLine=false, aInsert=false) {
         aString = aString.toString();
         const max = this.ROWS * this.COLS;
         const n = aInsert ? 0 : aString.length;

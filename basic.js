@@ -10,7 +10,7 @@ function main() {
     PUT('COPYRIGHT (C) 2018 picoBASIC PROJECT.');
     PUT('Ok');
 }
-function parseLine(aLine, aPrintOk) {
+function parseLine(aLine, aPrintOk=false) {
     const ss = new StringStream(aLine);
     const tr = new Tokenizer(ss);
     const s = Statement.parse(tr);
