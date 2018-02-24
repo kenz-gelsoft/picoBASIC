@@ -53,7 +53,7 @@ class Expr {
     // parsing states
     
     termState(t) {
-        if (t[0] == TOKEN_OPEN_PAREN) {
+        if (t[0] == Token.OPEN_PAREN) {
             this.opStack.push(t);
             return true;
         }
@@ -66,10 +66,10 @@ class Expr {
     }
 
     opState(t) {
-        if (t[0] == TOKEN_CLOSE_PAREN) {
+        if (t[0] == Token.CLOSE_PAREN) {
             while (this.opStack.length > 0) {
                 const top = this.opStack.pop();
-                if (top[0] == TOKEN_OPEN_PAREN) {
+                if (top[0] == Token.OPEN_PAREN) {
                     return true;
                 }
                 this.rpn.push(top);
@@ -102,17 +102,17 @@ class Expr {
     }
     opPriority(aOp) {
         switch (aOp[0]) {
-        case TOKEN_MUL:
-        case TOKEN_SLASH:
+        case Token.MUL:
+        case Token.SLASH:
             return 4;
-        case TOKEN_PLUS:
-        case TOKEN_MINUS:
+        case Token.PLUS:
+        case Token.MINUS:
             return 3;
-        case TOKEN_DIV:
+        case Token.DIV:
             return 2;
-        case TOKEN_MOD:
+        case Token.MOD:
             return 1;
-        case TOKEN_OPEN_PAREN:
+        case Token.OPEN_PAREN:
             return 0;
         default:
             throw `Invald operator: ${aOp}`;
@@ -126,11 +126,11 @@ class Expr {
             return false;
         }
         switch (aToken[0]) {
-        case TOKEN_IDENT:
-        case TOKEN_INT:
-        case TOKEN_FLOAT:
-        case TOKEN_STRING:
-        case TOKEN_EXPR:
+        case Token.IDENT:
+        case Token.INT:
+        case Token.FLOAT:
+        case Token.STRING:
+        case Token.EXPR:
             return true;
         }
         return false;
@@ -140,12 +140,12 @@ class Expr {
             return false;
         }
         switch (aToken[0]) {
-        case TOKEN_PLUS:
-        case TOKEN_MINUS:
-        case TOKEN_MUL:
-        case TOKEN_SLASH:
-        case TOKEN_DIV:
-        case TOKEN_MOD:
+        case Token.PLUS:
+        case Token.MINUS:
+        case Token.MUL:
+        case Token.SLASH:
+        case Token.DIV:
+        case Token.MOD:
             return true;
         }
         return false;

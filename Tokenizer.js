@@ -1,31 +1,33 @@
-const TOKEN_INT = 'int';
-const TOKEN_FLOAT = 'float';
-const TOKEN_IDENT = 'ident';
-const TOKEN_EQUAL = 'equal';
-const TOKEN_PLUS  = 'plus';
-const TOKEN_MINUS = 'minus';
-const TOKEN_MUL   = 'mul';
-const TOKEN_SLASH = 'slash';
-const TOKEN_DIV   = 'div';
-const TOKEN_MOD   = 'mod';
-const TOKEN_OPEN_PAREN  = 'open_paren';
-const TOKEN_CLOSE_PAREN = 'close_paren';
-const TOKEN_SPACE = 'space';
-const TOKEN_COMMA = 'comma';
-const TOKEN_PERIOD = 'period';
-const TOKEN_EOS = 'eos';
-const TOKEN_STRING = 'string';
-const TOKEN_EXPR = 'expr';
+const Token = {
+    INT: 'int',
+    FLOAT: 'float',
+    IDENT: 'ident',
+    EQUAL: 'equal',
+    PLUS : 'plus',
+    MINUS: 'minus',
+    MUL  : 'mul',
+    SLASH: 'slash',
+    DIV  : 'div',
+    MOD  : 'mod',
+    OPEN_PAREN : 'open_paren',
+    CLOSE_PAREN: 'close_paren',
+    SPACE: 'space',
+    COMMA: 'comma',
+    PERIOD: 'period',
+    EOS: 'eos',
+    STRING: 'string',
+    EXPR: 'expr',
+};
 
 const OPERATOR_TOKENS = {
-    '=': TOKEN_EQUAL,
-    '+': TOKEN_PLUS,
-    '-': TOKEN_MINUS,
-    '*': TOKEN_MUL,
-    '/': TOKEN_SLASH,
-    '(': TOKEN_OPEN_PAREN,
-    ')': TOKEN_CLOSE_PAREN,
-    ',': TOKEN_COMMA,
+    '=': Token.EQUAL,
+    '+': Token.PLUS,
+    '-': Token.MINUS,
+    '*': Token.MUL,
+    '/': Token.SLASH,
+    '(': Token.OPEN_PAREN,
+    ')': Token.CLOSE_PAREN,
+    ',': Token.COMMA,
 };
 
 function isAlpha(c) {
@@ -117,7 +119,7 @@ class Tokenizer {
 
     beginState(c) {
         if (c == null) {
-          return TOKEN_EOS;
+          return Token.EOS;
         }
         if (isDigit(c)) {
             this.state = this.intOrFloatState;
@@ -151,14 +153,14 @@ class Tokenizer {
             return null;
         }
         this.back();
-        return TOKEN_INT;
+        return Token.INT;
     }
     floatState(c) {
         if (isDigit(c)) {
             return null;
         }
         this.back();
-        return TOKEN_FLOAT;
+        return Token.FLOAT;
     }
     
     identState(c) {
@@ -167,7 +169,7 @@ class Tokenizer {
             return null;
         }
         this.back();
-        return TOKEN_IDENT;
+        return Token.IDENT;
     }
     
     stringState(c) {
@@ -176,7 +178,7 @@ class Tokenizer {
             return null;
         }
         if (!this.escaped && c == '"') {
-           return TOKEN_STRING;
+           return Token.STRING;
         }
         this.escaped = false;
         return null;
