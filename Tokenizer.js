@@ -88,7 +88,7 @@ class Tokenizer {
         this.pushBacked.push(aToken);
     }
 
-    _back() {
+    backOneChar() {
         if (this.isEOF) {
             return;
         }
@@ -138,14 +138,14 @@ class Tokenizer {
         if (isDigit(c)) {
             return null;
         }
-        this._back();
+        this.backOneChar();
         return Token.INT;
     }
     floatState(c) {
         if (isDigit(c)) {
             return null;
         }
-        this._back();
+        this.backOneChar();
         return Token.FLOAT;
     }
     
@@ -154,7 +154,7 @@ class Tokenizer {
             isDigit(c)) {
             return null;
         }
-        this._back();
+        this.backOneChar();
         return Token.IDENT;
     }
     
@@ -174,7 +174,7 @@ class Tokenizer {
         if (isSpace(c)) {
             return null;
         }
-        this._back();
+        this.backOneChar();
         this.reset();
         return null;
     }
