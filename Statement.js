@@ -13,7 +13,7 @@ class Statement {
         switch (t[0]) {
         case TOKEN_IDENT:
             const s = t[1].toUpperCase();
-            const st = this[s];
+            let st = this[s];
             if (st == null) {
                 this.tr.back();
                 st = this.LET;
