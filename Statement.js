@@ -12,8 +12,7 @@ class Statement {
         const t = this.tr.next();
         switch (t.type) {
         case Token.IDENT:
-            const s = t.string.toUpperCase();
-            let st = this[s];
+            let st = this[t.toJS()];
             if (st == null) {
                 this.tr.back();
                 st = this.LET;
@@ -47,7 +46,7 @@ class Statement {
             val == null) {
             throw 'Syntax error';
         }
-       return `${varName.string} = ${val.toJS()};`;
+        return `${varName.toJS()} = ${val.toJS()};`;
     }
     
     CLS() {
@@ -69,6 +68,6 @@ class Statement {
             t4.type != Token.INT) {
             throw 'Syntax error';
         }
-        return `LOCATE(${t2.string}, ${t4.string});`;
+        return `LOCATE(${t2.toJS()}, ${t4.toJS()});`;
     }
 }

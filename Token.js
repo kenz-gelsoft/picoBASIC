@@ -27,6 +27,13 @@ class Token {
     toString() {
         return `Token(${this.type}|${this.string})`;
     }
+    toJS() {
+        switch (this.type) {
+        case Token.IDENT:
+            return this.string.toUpperCase();
+        }
+        return this.string;
+    }
 
     // Token Tests
     isTerm() {

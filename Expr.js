@@ -35,14 +35,14 @@ class Expr {
                 this.debug(`calcStack: ${calcStack}`);
                 const rhs = calcStack.pop();
                 const lhs = calcStack.pop();
-                const js = `(${lhs.string} ${t.string} ${rhs.string})`;
+                const js = `(${lhs.toJS()} ${t.toJS()} ${rhs.toJS()})`;
                 calcStack.push(new Token('expr', js));
             } else {
                 calcStack.push(t);
             }
         }
         this.debug(calcStack);
-        const js = calcStack.pop().string;
+        const js = calcStack.pop().toJS();
         this.debug(js);
         return js;
     }
