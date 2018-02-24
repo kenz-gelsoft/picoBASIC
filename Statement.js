@@ -14,7 +14,7 @@ class Statement {
         case Token.IDENT:
             let st = this[t.toJS()];
             if (st == null) {
-                this.tr.back();
+                this.tr.back(t);
                 st = this.LET;
             }
             this.js = st.apply(this);

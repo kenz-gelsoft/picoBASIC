@@ -58,10 +58,13 @@ class Tokenizer {
         this.reset();
         this.isEOF = false;
         this.escaped = false;
+        this.pushBacked = [];
     }
 
-    // returns [type, string]
     next() {
+        if (this.pushBacked.length > 0) {
+            return this.pushBacked.pop();
+        }
         if (this.isEOF) {
             return null;
         }
@@ -81,7 +84,11 @@ class Tokenizer {
         }
     }
 
-    back() {
+    back(aToken) {
+        this.pushBacked.push(aToken);
+    }
+
+    _back() {
         if (this.isEOF) {
             return;
         }
@@ -131,14 +138,14 @@ class Tokenizer {
         if (isDigit(c)) {
             return null;
         }
-        this.back();
+        this._back();
         return Token.INT;
     }
     floatState(c) {
         if (isDigit(c)) {
             return null;
         }
-        this.back();
+        this._back();
         return Token.FLOAT;
     }
     
@@ -147,7 +154,7 @@ class Tokenizer {
             isDigit(c)) {
             return null;
         }
-        this.back();
+        this._back();
         return Token.IDENT;
     }
     
@@ -167,7 +174,7 @@ class Tokenizer {
         if (isSpace(c)) {
             return null;
         }
-        this.back();
+        this._back();
         this.reset();
         return null;
     }

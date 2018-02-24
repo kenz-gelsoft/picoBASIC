@@ -77,7 +77,7 @@ class Expr {
             throw 'Parenthesis mismatch';
         }
         if (!t.isOperator()) {
-            this.tr.back();
+            this.tr.back(t);
             while (this.opStack.length > 0) {
                 this.rpn.push(this.opStack.pop());
             }
