@@ -1,65 +1,65 @@
-function Console(aId) {
-    this.id = aId;
-    this.cursor = 0;
-    this.clear();
-    
-    var that = this;
-    window.addEventListener('keydown', function (event) {
-        that.keyDown(event);
-    }, false);
-}
-Console.prototype = {
-    COLS: 80,
-    ROWS: 24,
-    
-    DEBUG: true,
+class Console {
+    constructor(aId) {
+        this.id = aId;
+        this.cursor = 0;
+        this.clear();
+        
+        window.addEventListener('keydown', (event) => {
+            this.keyDown(event);
+        }, false);
+    }
+    get COLS()  { return 80; }
+    get ROWS()  { return 24; }
 
-    clear: function () {
+    get DEBUG() { return true; }
+
+    clear() {
         this.buffer = this.chars(' ', this.COLS * this.ROWS);
         this.cursor = 0;
         this.update();
-    },
-    update: function () {
+    }
+    update() {
         while (this.getY() >= this.ROWS) {
             this.scroll();
         }
-        var lines = [];
-        for (var i = 0; i < this.ROWS; ++i) {
+        const lines = [];
+        for (let i = 0; i < this.ROWS; ++i) {
             lines.push(this.buffer.substr(i * this.COLS, this.COLS));
         }
-        var pre = document.getElementById(this.id);
+        const pre = document.getElementById(this.id);
         pre.innerHTML = lines.join('\n');
         //this.debug();
-    },
-    scroll: function () {
+    }
+    scroll() {
         this.buffer = this.buffer.substring(this.COLS);
         this.buffer += this.chars(' ', this.COLS);
         this.cursor -= this.COLS;
-    },
-    chars: function (char, count) {
-        var s = '';
-        for (var i = 0; i < count; ++i) {
+    }
+    chars(char, count) {
+        let s = '';
+        for (let i = 0; i < count; ++i) {
             s += char;
         }
         return s;
-    },
-    debug: function () {
-        var msg = '';
-        var items = [
+    }
+    debug() {
+        let msg = '';
+        const items = [
             ['cursor', this.cursor],
             ['x', this.getX()],
             ['y', this.getY()],
-        ].forEach(function (item) {
+        ];
+        for (const item of items) {
             msg += item.join('=') + '\n';
-        });
+        }
         document.getElementById('debug').innerHTML = msg;
-    },
-    print: function (aString, aNewLine, aInsert) {
+    }
+    print(aString, aNewLine=false, aInsert=false) {
         aString = aString.toString();
-        var max = this.ROWS * this.COLS;
-        var n = aInsert ? 0 : aString.length;
-        var front = this.buffer.substring(0, this.cursor);
-        var rear  = this.buffer.substring(this.cursor + n, max);
+        const max = this.ROWS * this.COLS;
+        const n = aInsert ? 0 : aString.length;
+        const front = this.buffer.substring(0, this.cursor);
+        const rear  = this.buffer.substring(this.cursor + n, max);
         this.buffer = front + aString + rear;
         if (aInsert) {
             this.buffer = this.buffer.substring(0, max);
@@ -70,28 +70,28 @@ Console.prototype = {
             this.cursor += aString.length;
         }
         this.update();
-    },
-    backspace: function () {
+    }
+    backspace() {
         --this.cursor;
-        var max = this.ROWS * this.COLS;
-        var front = this.buffer.substring(0, this.cursor);
-        var rear  = this.buffer.substring(this.cursor + 1, max);
+        const max = this.ROWS * this.COLS;
+        const front = this.buffer.substring(0, this.cursor);
+        const rear  = this.buffer.substring(this.cursor + 1, max);
         this.buffer = front + ' ' + rear;
         this.update();
-    },
-    getX: function () {
+    }
+    getX() {
         return this.cursor % this.COLS;
-    },
-    getY: function () {
+    }
+    getY() {
         return (this.cursor / this.COLS) | 0;
-    },
-    locate: function (x, y) {
+    }
+    locate(x, y) {
         this.cursor = x + y * this.COLS;
-    },
-    getCursorLine: function () {
+    }
+    getCursorLine() {
         return this.buffer.substr(this.COLS * this.getY(), this.COLS);
-    },
-    parseLine: function (aLine) {
+    }
+    parseLine(aLine) {
         if (this.DEBUG) {
             parseLine(aLine, true);
             return;
@@ -101,15 +101,15 @@ Console.prototype = {
         } catch (e) {
             PUT('Syntax error');
         }
-    },
-    keyDown: function (aEvent) {
-        var modifiersToIgnore = [
+    }
+    keyDown(aEvent) {
+        const modifiersToIgnore = [
             'Alt', 'Control', 'Meta',
         ];
-        var keysToIgnore = [
+        const keysToIgnore = [
             'Shift', 'Dead', 'F5',
         ];
-        for (modifier of modifiersToIgnore) {
+        for (const modifier of modifiersToIgnore) {
             if (aEvent.getModifierState(modifier)) {
                 return;
             }
@@ -136,7 +136,7 @@ Console.prototype = {
             //this.locate(this.getX(), this.getY() + 1);
             break;
         case 'Enter':
-            var line = this.getCursorLine();
+            const line = this.getCursorLine();
             this.print('', true);
             this.parseLine(line);
             break;
@@ -149,5 +149,5 @@ Console.prototype = {
             this.print(aEvent.key, false, true);
         }
         aEvent.preventDefault();
-    },
-};
+    }
+}

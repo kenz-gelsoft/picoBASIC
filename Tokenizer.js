@@ -1,23 +1,23 @@
-var TOKEN_INT = 'int';
-var TOKEN_FLOAT = 'float';
-var TOKEN_IDENT = 'ident';
-var TOKEN_EQUAL = 'equal';
-var TOKEN_PLUS  = 'plus';
-var TOKEN_MINUS = 'minus';
-var TOKEN_MUL   = 'mul';
-var TOKEN_SLASH = 'slash';
-var TOKEN_DIV   = 'div';
-var TOKEN_MOD   = 'mod';
-var TOKEN_OPEN_PAREN  = 'open_paren';
-var TOKEN_CLOSE_PAREN = 'close_paren';
-var TOKEN_SPACE = 'space';
-var TOKEN_COMMA = 'comma';
-var TOKEN_PERIOD = 'period';
-var TOKEN_EOS = 'eos';
-var TOKEN_STRING = 'string';
-var TOKEN_EXPR = 'expr';
+const TOKEN_INT = 'int';
+const TOKEN_FLOAT = 'float';
+const TOKEN_IDENT = 'ident';
+const TOKEN_EQUAL = 'equal';
+const TOKEN_PLUS  = 'plus';
+const TOKEN_MINUS = 'minus';
+const TOKEN_MUL   = 'mul';
+const TOKEN_SLASH = 'slash';
+const TOKEN_DIV   = 'div';
+const TOKEN_MOD   = 'mod';
+const TOKEN_OPEN_PAREN  = 'open_paren';
+const TOKEN_CLOSE_PAREN = 'close_paren';
+const TOKEN_SPACE = 'space';
+const TOKEN_COMMA = 'comma';
+const TOKEN_PERIOD = 'period';
+const TOKEN_EOS = 'eos';
+const TOKEN_STRING = 'string';
+const TOKEN_EXPR = 'expr';
 
-var OPERATOR_TOKENS = {
+const OPERATOR_TOKENS = {
     '=': TOKEN_EQUAL,
     '+': TOKEN_PLUS,
     '-': TOKEN_MINUS,
@@ -29,7 +29,7 @@ var OPERATOR_TOKENS = {
 };
 
 function isAlpha(c) {
-    var code = ASC(c);
+    const code = ASC(c);
     return (ASC('A') <= code && code <= ASC('Z'))
         || (ASC('a') <= code && code <= ASC('z'));
 }
@@ -37,7 +37,7 @@ function isIdentStart(c) {
     return c == '_' || isAlpha(c);
 }
 function isDigit(c) {
-    var num = ASC(c) - ASC('0');
+    const num = ASC(c) - ASC('0');
     return 0 <= num && num <= 9;
 }
 function isSpace(c) {
@@ -45,7 +45,7 @@ function isSpace(c) {
 }
 
 function testTokenizer() {
-    var tests = [
+    const tests = [
         'PRINT"HELLO \\\"WORLD\\\""',
         'PRINT"HELLO"',
         '123,',
@@ -56,65 +56,66 @@ function testTokenizer() {
         'SCREEN 1, 2',
         'LINE (20,40)-(50,50),3',
     ];
-    tests.forEach(function (aLine) {
-        PUT(aLine);
-        var ss = new StringStream(aLine);
-        var tr = new Tokenizer(ss);
+    for (line of tests) {
+        PUT(line);
+        const ss = new StringStream(line);
+        const tr = new Tokenizer(ss);
         while (true) {
-            var t = tr.next();
+            const t = tr.next();
             if (t == null) {
                 break;
             }
             PUT(t);
         }
         PUT('-----------');
-    });
+    }
 }
 
-function Tokenizer(aStream) {
-    this.stream = aStream;
-    this.reset();
-    this.isEOF = false;
-    this.escaped = false;
-}
-Tokenizer.prototype = {
+class Tokenizer {
+    constructor(aStream) {
+        this.stream = aStream;
+        this.reset();
+        this.isEOF = false;
+        this.escaped = false;
+    }
+
     // returns [type, string]
-    next: function () {
+    next() {
         if (this.isEOF) {
             return null;
         }
         while (true) {
-            var c = this.stream.getc();
+            const c = this.stream.getc();
             if (c == null) {
                 this.isEOF = true;
             } else {
                 this.token += c;
             }
-            var type = this.state(c);
+            const type = this.state(c);
             if (type != null) {
-                var value = this.token;
+                const value = this.token;
                 this.reset();
                 return [type, value];
             }
         }
-    },
+    }
 
-    back: function () {
+    back() {
         if (this.isEOF) {
             return;
         }
         this.stream.back();
         this.token = this.token.substr(0, this.token.length - 1);
-    },
+    }
 
-    reset: function () {
+    reset() {
         this.token = '';
         this.state = this.beginState;
-    },
+    }
     
     // Tokenizer states
 
-    beginState: function (c) {
+    beginState(c) {
         if (c == null) {
           return TOKEN_EOS;
         }
@@ -134,14 +135,14 @@ Tokenizer.prototype = {
             this.state = this.stringState;
             return null;
         }
-        var found = OPERATOR_TOKENS[c];
+        const found = OPERATOR_TOKENS[c];
         if (!found) {
             throw 'Unexpected token';
         }
         return found;
-    },
+    }
     
-    intOrFloatState: function (c) {
+    intOrFloatState(c) {
         if (c == '.') {
             this.state = this.floatState;
             return null;
@@ -151,25 +152,25 @@ Tokenizer.prototype = {
         }
         this.back();
         return TOKEN_INT;
-    },
-    floatState: function (c) {
+    }
+    floatState(c) {
         if (isDigit(c)) {
             return null;
         }
         this.back();
         return TOKEN_FLOAT;
-    },
+    }
     
-    identState: function (c) {
+    identState(c) {
         if (isIdentStart(c) ||
             isDigit(c)) {
             return null;
         }
         this.back();
         return TOKEN_IDENT;
-    },
+    }
     
-    stringState: function (c) {
+    stringState(c) {
         if (c == '\\') {
             this.escaped = true;
             return null;
@@ -179,14 +180,14 @@ Tokenizer.prototype = {
         }
         this.escaped = false;
         return null;
-    },
+    }
     
-    skipSpaceState: function (c) {
+    skipSpaceState(c) {
         if (isSpace(c)) {
             return null;
         }
         this.back();
         this.reset();
         return null;
-    },
-};
+    }
+}
