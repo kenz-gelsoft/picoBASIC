@@ -20,7 +20,8 @@ class Statement {
             }
             this.js = st.apply(this);
             const t2 = this.tr.next();
-            if (t2) {
+            //this.debug(t2);
+            if (t2 && t2[0] != TOKEN_EOS) {
                 throw 'Syntax error';
             }
             break;
@@ -30,6 +31,10 @@ class Statement {
     }
     toJS() {
         return this.js;
+    }
+
+    debug(str) {
+        document.getElementById('debug').innerHTML += `${str}\n`;
     }
 
     // BASIC statements
