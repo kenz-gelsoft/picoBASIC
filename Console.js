@@ -48,9 +48,10 @@ class Console {
             ['cursor', this.cursor],
             ['x', this.getX()],
             ['y', this.getY()],
-        ].forEach((item) => {
+        ];
+        for (const item of items) {
             msg += item.join('=') + '\n';
-        });
+        }
         document.getElementById('debug').innerHTML = msg;
     }
     print(aString, aNewLine=false, aInsert=false) {

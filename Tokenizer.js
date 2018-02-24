@@ -56,9 +56,9 @@ function testTokenizer() {
         'SCREEN 1, 2',
         'LINE (20,40)-(50,50),3',
     ];
-    tests.forEach((aLine) => {
-        PUT(aLine);
-        const ss = new StringStream(aLine);
+    for (line of tests) {
+        PUT(line);
+        const ss = new StringStream(line);
         const tr = new Tokenizer(ss);
         while (true) {
             const t = tr.next();
@@ -68,7 +68,7 @@ function testTokenizer() {
             PUT(t);
         }
         PUT('-----------');
-    });
+    }
 }
 
 class Tokenizer {
