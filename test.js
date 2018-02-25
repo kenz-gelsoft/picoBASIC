@@ -44,10 +44,10 @@ let console = null;
 function main() {
     console = new TestConsole('console');
     testTokenizer();
-    var result = [`Test Results:`,
-        `allTests: ${allTests}`,
-        `succeeded: ${succeeded}`,
-        `failed: ${failed}`,
+    const result = (allTests == succeeded) ? 'OK' : 'NG';
+    const report = [`[${result}]:`,
+        `${succeeded}/${allTests} succeeded.`,
+        `${failed}/${allTests} failed.`,
     ].join('\n\t');
-    console.print(result);
+    console.print(report);
 }
