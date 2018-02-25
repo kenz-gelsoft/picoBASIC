@@ -3,6 +3,6 @@ window.addEventListener('load', () => {
 }, false);
 let console = null;
 function main() {
-    console = new Console('console');
+    console = new TestConsole('console');
     testTokenizer();
 }
