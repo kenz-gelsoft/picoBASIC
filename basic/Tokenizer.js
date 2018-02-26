@@ -25,33 +25,6 @@ function isSpace(c) {
     return c == ' ';
 }
 
-function testTokenizer() {
-    const tests = [
-        'PRINT"HELLO \\\"WORLD\\\""',
-        'PRINT"HELLO"',
-        '123,',
-        'I=3029.9',
-        'I=1+3',
-        'I=(1+3)*2',
-        'I=(X_Y+3)*2',
-        'SCREEN 1, 2',
-        'LINE (20,40)-(50,50),3',
-    ];
-    for (line of tests) {
-        PUT(line);
-        const ss = new StringStream(line);
-        const tr = new Tokenizer(ss);
-        while (true) {
-            const t = tr.next();
-            if (t == null) {
-                break;
-            }
-            PUT(t);
-        }
-        PUT('-----------');
-    }
-}
-
 class Tokenizer {
     constructor(aStream) {
         this.stream = aStream;
