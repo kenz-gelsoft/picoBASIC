@@ -1,3 +1,8 @@
+describe('Tokenizer', function () {
+    it('should parse valid tokens', function() {
+        testTokenizer();
+    });
+});
 function testTokenizer() {
     const tests = [
         ['PRINT"HELLO \\\"WORLD\\\""', [
@@ -77,7 +82,6 @@ function testTokenizer() {
     for (pair of tests) {
         const line = pair.shift();
         const answer = pair.shift();
-        PUT(`Testing |${line}| ...`);
         const ss = new StringStream(line);
         const tr = new Tokenizer(ss);
         const tokens = [];
@@ -88,6 +92,6 @@ function testTokenizer() {
             }
             tokens.push(t);
         }
-        assert(new Equals(answer, tokens));
+        expect(tokens).to.eql(answer);
     }
 }
