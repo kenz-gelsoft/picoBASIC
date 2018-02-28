@@ -16,7 +16,7 @@ describe('Tokenizer', function () {
         for (const test of arguments) {
             const line   = test.shift();
             const answer = test.shift();
-            expect(tokenize(line)).to.eql(answer);        
+            expect(tokenize(line)).toEqual(answer);        
         }
     };
    
