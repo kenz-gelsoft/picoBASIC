@@ -9,7 +9,7 @@ class Console {
         }, false);
         this.sipController = new SIPController();
         const e = document.getElementById(aId);
-        e.addEventListener('click', (event) => {
+        e.addEventListener('touchstart', (event) => {
             this.sipController.show();
         }, true);
     }
