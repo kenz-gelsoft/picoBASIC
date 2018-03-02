@@ -10,6 +10,10 @@ class SIPController {
         }
         dummy = document.createElement('textarea');
         dummy.id = this.id;
+        dummy.style.position = 'absolute';
+        dummy.style.left = '-10em';
+        dummy.style.top  = '-10em';
+        dummy.style.fontSize = '16px';
         document.body.appendChild(dummy);
         return dummy;
     }
