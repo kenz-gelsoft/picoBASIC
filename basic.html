@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
         <script src="basic/Expr.js"></script>
         <script src="basic/Token.js"></script>
         <script src="basic/Tokenizer.js"></script>
@@ -9,20 +10,25 @@
         <script src="utils/StringStream.js"></script>
         <script src="basic.js"></script>
         <style type="text/css">
-textarea {
-    font-family: monospace;
+#sip-presenter {
+    position: absolute;
+    top: -10em;
+    left: -10em;
+    font-size: 16px;
 }
 #console {
     background-color: black;
     color: white;
     display: inline-block;
     font-family: monospace;
+    font-size: 1%;
     line-height: 125%;
 }
         </style>
     </head>
     <body>
         <pre id="console" ></pre>
+        <textarea id="sip-presenter"></textarea>
         <pre id="debug"></pre>
     </body>
 </html>

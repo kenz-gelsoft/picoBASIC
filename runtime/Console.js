@@ -7,6 +7,12 @@ class Console {
         window.addEventListener('keydown', (event) => {
             this.keyDown(event);
         }, false);
+        const e = document.getElementById(aId);
+        e.addEventListener('click', (event) => {
+            // TODO: focus management
+            var sipPresenter = document.getElementById('sip-presenter');
+            sipPresenter.focus();
+        }, true);
     }
     get COLS()  { return 80; }
     get ROWS()  { return 24; }
