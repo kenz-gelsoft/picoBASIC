@@ -7,11 +7,10 @@ class Console {
         window.addEventListener('keydown', (event) => {
             this.keyDown(event);
         }, false);
+        this.sipController = new SIPController();
         const e = document.getElementById(aId);
         e.addEventListener('click', (event) => {
-            // TODO: focus management
-            var sipPresenter = document.getElementById('sip-presenter');
-            sipPresenter.focus();
+            this.sipController.show();
         }, true);
     }
     get COLS()  { return 80; }
