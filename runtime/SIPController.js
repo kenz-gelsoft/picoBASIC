@@ -9,6 +9,7 @@ class SIPController {
             return dummy;
         }
         dummy = document.createElement('textarea');
+        dummy.id = this.id;
         document.body.appendChild(dummy);
         return dummy;
     }
