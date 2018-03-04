@@ -29,7 +29,7 @@ class Tokenizer {
     constructor(aStream) {
         this.stream = aStream;
         this.reset();
-        this.isEOF = false;
+        this.isEOS = false;
         this.escaped = false;
         this.pushBacked = [];
     }
@@ -44,7 +44,7 @@ class Tokenizer {
         while (true) {
             const c = this.stream.getc();
             if (c == null) {
-                this.isEOF = true;
+                this.isEOS = true;
             } else {
                 this.token += c;
             }
@@ -62,7 +62,7 @@ class Tokenizer {
     }
 
     backOneChar() {
-        if (this.isEOF) {
+        if (this.isEOS) {
             return;
         }
         this.stream.back();
