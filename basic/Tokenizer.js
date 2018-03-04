@@ -30,6 +30,7 @@ class Tokenizer {
         this.stream = aStream;
         this.reset();
         this.isEOF = false;
+        this.isEnd = false;
         this.escaped = false;
         this.pushBacked = [];
     }
@@ -38,7 +39,7 @@ class Tokenizer {
         if (this.pushBacked.length > 0) {
             return this.pushBacked.pop();
         }
-        if (this.isEOF) {
+        if (this.isEnd) {
             return null;
         }
         while (true) {
@@ -78,7 +79,8 @@ class Tokenizer {
 
     beginState(c) {
         if (c == null) {
-          return Token.EOS;
+            this.isEnd = true;
+            return Token.EOS;
         }
         if (isDigit(c)) {
             this.state = this.intOrFloatState;

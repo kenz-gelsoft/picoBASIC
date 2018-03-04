@@ -49,7 +49,7 @@ describe('Tokenizer', function () {
             new Token(Token.IDENT, 'I'),
             new Token(Token.EQUAL, '='),
             new Token(Token.FLOAT, '3029.9'),
-            // FIXME: here should be EOS
+            new Token(Token.EOS, ''),
         ]],
         );
     });
@@ -61,7 +61,7 @@ describe('Tokenizer', function () {
             new Token(Token.INT, '1'),
             new Token(Token.PLUS, '+'),
             new Token(Token.INT, '3'),
-            // FIXME: here should be EOS
+            new Token(Token.EOS, ''),
         ]],
         ['I=(1+3)*2', [
             new Token(Token.IDENT, 'I'),
@@ -73,6 +73,7 @@ describe('Tokenizer', function () {
             new Token(Token.CLOSE_PAREN, ')'),
             new Token(Token.MUL, '*'),
             new Token(Token.INT, '2'),
+            new Token(Token.EOS, ''),
         ]],
         ['I=(X_Y+3)*2', [
             new Token(Token.IDENT, 'I'),
@@ -84,6 +85,7 @@ describe('Tokenizer', function () {
             new Token(Token.CLOSE_PAREN, ')'),
             new Token(Token.MUL, '*'),
             new Token(Token.INT, '2'),
+            new Token(Token.EOS, ''),
         ]],
         );
     });
@@ -94,6 +96,7 @@ describe('Tokenizer', function () {
             new Token(Token.INT, '1'),
             new Token(Token.COMMA, ','),
             new Token(Token.INT, '2'),
+            new Token(Token.EOS, ''),
         ]],
         ['LINE (20,40)-(50,50),3', [
             new Token(Token.IDENT, 'LINE'),
@@ -110,6 +113,7 @@ describe('Tokenizer', function () {
             new Token(Token.CLOSE_PAREN, ')'),
             new Token(Token.COMMA, ','),
             new Token(Token.INT, '3'),
+            new Token(Token.EOS, ''),
         ]],
         );
     });
