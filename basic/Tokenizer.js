@@ -30,7 +30,6 @@ class Tokenizer {
         this.stream = aStream;
         this.reset();
         this.isEOF = false;
-        this.isEnd = false;
         this.escaped = false;
         this.pushBacked = [];
     }
@@ -39,7 +38,7 @@ class Tokenizer {
         if (this.pushBacked.length > 0) {
             return this.pushBacked.pop();
         }
-        if (this.isEnd) {
+        if (this.state == this.endState) {
             return null;
         }
         while (true) {
@@ -72,37 +71,37 @@ class Tokenizer {
 
     reset() {
         this.token = '';
-        this.state = this.beginState;
+        if (this.state != this.endState) {
+            this.state = this.beginState;
+        }
     }
     
     // Tokenizer states
 
     beginState(c) {
-        if (c == null) {
-            this.isEnd = true;
-            return Token.EOS;
-        }
-        if (isDigit(c)) {
-            this.state = this.intOrFloatState;
-            return null;
-        }
-        if (isIdentStart(c)) {
-            this.state = this.identState;
-            return null;
-        }
-        if (isSpace(c)) {
-            this.state = this.skipSpaceState;
-            return null;
-        }
-        if (c == '"') {
-            this.state = this.stringState;
-            return null;
+        const rules = [
+            [(c) => c == null, this.endState],
+            [isDigit,          this.intOrFloatState],
+            [isIdentStart,     this.identState],
+            [isSpace,          this.skipSpaceState],
+            [(c) => c == '"',  this.stringState],
+        ];
+        for (const rule of rules) {
+            const predicate = rule.shift();
+            const newState  = rule.shift();
+            if (predicate(c)) {
+                this.state = newState;
+                return null;
+            }
         }
         const found = OPERATOR_TOKENS[c];
         if (!found) {
             throw 'Unexpected token';
         }
         return found;
+    }
+    endState(c) {
+        return Token.EOS;
     }
     
     intOrFloatState(c) {
