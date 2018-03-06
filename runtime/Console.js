@@ -7,6 +7,11 @@ class Console {
         window.addEventListener('keydown', (event) => {
             this.keyDown(event);
         }, false);
+        this.sipController = new SIPController();
+        const e = document.getElementById(aId);
+        e.addEventListener('touchstart', (event) => {
+            this.sipController.show();
+        }, true);
     }
     get COLS()  { return 80; }
     get ROWS()  { return 24; }
