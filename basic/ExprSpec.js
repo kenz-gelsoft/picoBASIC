@@ -15,7 +15,8 @@ describe('Expr', function () {
         expect(parse('1,')).toBe('1');
         expect(parse('2=')).toBe('2');
         expect(parse('10""')).toBe('10');
-        // FIXME following doesn't stop
-        // expect(parse('10"')).toBe('10');
+        expect(function () {
+            parse('10"');
+        }).toThrowError();
     });
-});
+ });

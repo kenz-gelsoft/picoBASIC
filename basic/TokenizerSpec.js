@@ -34,6 +34,11 @@ describe('Tokenizer', function () {
         ]],
         );
     });
+    it('should throw if unpaired double quote', function () {
+        expect(function () {
+            tokenize('"');
+        }).toThrowError();
+    });
     it('should support integers', function () {
         testLines(
         ['123,', [

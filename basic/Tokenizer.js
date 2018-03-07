@@ -133,6 +133,9 @@ class Tokenizer {
     }
     
     stringState(c) {
+        if (!c) {
+            throw new Error('Unexpected End of Stream!');
+        }
         if (c == '\\') {
             this.escaped = true;
             return null;
