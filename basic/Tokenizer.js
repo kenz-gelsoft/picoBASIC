@@ -96,7 +96,7 @@ class Tokenizer {
         }
         const found = OPERATOR_TOKENS[c];
         if (!found) {
-            throw 'Unexpected token';
+            throw new Error('Unexpected token');
         }
         return found;
     }

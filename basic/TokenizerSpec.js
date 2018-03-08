@@ -122,4 +122,9 @@ describe('Tokenizer', function () {
         ]],
         );
     });
+    it('should throw if period occurs outside floating value', function () {
+        expect(function () {
+            tokenize('.')
+        }).toThrowError();
+   });
 });
