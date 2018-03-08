@@ -4,19 +4,27 @@ describe('Expr', function () {
         const tr = new Tokenizer(ss);
         return Expr.parse(tr).toJS();
     }
-    it('should parse a integer', function () {
+    it('should parse integers', function () {
         expect(parse('1')).toBe('1');
         expect(parse('2')).toBe('2');
         expect(parse('10')).toBe('10');
         expect(parse('256')).toBe('256');
         expect(parse('01')).toBe('01');
     });
-    it('should parse a integer with another token', function () {
+    it('should parse integers with another token', function () {
         expect(parse('1,')).toBe('1');
         expect(parse('2=')).toBe('2');
         expect(parse('10""')).toBe('10');
         expect(function () {
             parse('10"');
+        }).toThrowError();
+    });
+    it('should parse floating numbers', function () {
+        expect(parse('1.2')).toBe('1.2');
+        expect(parse('0.1')).toBe('0.1');
+        expect(parse('00.10')).toBe('00.10');
+        expect(function () {
+            parse('0.0.0');
         }).toThrowError();
     });
  });
