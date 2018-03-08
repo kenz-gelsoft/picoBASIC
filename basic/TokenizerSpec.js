@@ -1,5 +1,5 @@
-describe('Tokenizer', function () {
-    const tokenize = function (aLine) {
+describe('Tokenizer', () => {
+    function tokenize(aLine) {
         const ss = new StringStream(aLine);
         const tr = new Tokenizer(ss);
         const tokens = [];
@@ -12,7 +12,7 @@ describe('Tokenizer', function () {
         }
         return tokens;
     };
-    const testLines = function () {
+    function testLines() {
         for (const test of arguments) {
             const line   = test.shift();
             const answer = test.shift();
@@ -20,7 +20,7 @@ describe('Tokenizer', function () {
         }
     };
    
-    it('should support strings', function () {
+    it('should support strings', () => {
         testLines(
         ['PRINT"HELLO \\\"WORLD\\\""', [
             new Token(Token.IDENT, 'PRINT'),
@@ -34,12 +34,12 @@ describe('Tokenizer', function () {
         ]],
         );
     });
-    it('should throw if unpaired double quote', function () {
-        expect(function () {
+    it('should throw if unpaired double quote', () => {
+        expect(() => {
             tokenize('"');
         }).toThrowError();
     });
-    it('should support integers', function () {
+    it('should support integers', () => {
         testLines(
         ['123,', [
             new Token(Token.INT, '123'),
@@ -48,7 +48,7 @@ describe('Tokenizer', function () {
         ]],
         );
     });
-    it('should support variable assignments', function () {
+    it('should support variable assignments', () => {
         testLines(
         ['I=3029.9', [
             new Token(Token.IDENT, 'I'),
@@ -58,7 +58,7 @@ describe('Tokenizer', function () {
         ]],
         );
     });
-    it('should support expressions', function () {
+    it('should support expressions', () => {
         testLines(
         ['I=1+3', [
             new Token(Token.IDENT, 'I'),
@@ -94,7 +94,7 @@ describe('Tokenizer', function () {
         ]],
         );
     });
-    it('should support other statements', function() {
+    it('should support other statements', () => {
         testLines(
         ['SCREEN 1, 2', [
             new Token(Token.IDENT, 'SCREEN'),
@@ -122,8 +122,8 @@ describe('Tokenizer', function () {
         ]],
         );
     });
-    it('should throw if period occurs outside floating value', function () {
-        expect(function () {
+    it('should throw if period occurs outside floating value', () => {
+        expect(() => {
             tokenize('.')
         }).toThrowError();
    });
