@@ -5,7 +5,7 @@ class StringStream {
     }
     getc() {
         if (this.string.length == this.index) {
-            return null; // EOF
+            return null; // End of Stream
         }
         return this.string.charAt(this.index++);
     }

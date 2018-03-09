@@ -47,7 +47,10 @@ class Expr {
         return js;
     }
     debug(aStr) {
-        document.getElementById('debug').innerHTML += `${aStr}\n`;
+        const debug = document.getElementById('debug');
+        if (debug) {
+            debug.innerHTML += `${aStr}\n`;
+        }
     }
     
     // parsing states

@@ -29,7 +29,7 @@ class Tokenizer {
     constructor(aStream) {
         this.stream = aStream;
         this.reset();
-        this.isEOF = false;
+        this.isEOS = false;
         this.escaped = false;
         this.pushBacked = [];
     }
@@ -38,13 +38,13 @@ class Tokenizer {
         if (this.pushBacked.length > 0) {
             return this.pushBacked.pop();
         }
-        if (this.isEOF) {
+        if (this.state == this.endState) {
             return null;
         }
         while (true) {
             const c = this.stream.getc();
             if (c == null) {
-                this.isEOF = true;
+                this.isEOS = true;
             } else {
                 this.token += c;
             }
@@ -62,7 +62,7 @@ class Tokenizer {
     }
 
     backOneChar() {
-        if (this.isEOF) {
+        if (this.isEOS) {
             return;
         }
         this.stream.back();
@@ -71,36 +71,37 @@ class Tokenizer {
 
     reset() {
         this.token = '';
-        this.state = this.beginState;
+        if (this.state != this.endState) {
+            this.state = this.beginState;
+        }
     }
     
     // Tokenizer states
 
     beginState(c) {
-        if (c == null) {
-          return Token.EOS;
-        }
-        if (isDigit(c)) {
-            this.state = this.intOrFloatState;
-            return null;
-        }
-        if (isIdentStart(c)) {
-            this.state = this.identState;
-            return null;
-        }
-        if (isSpace(c)) {
-            this.state = this.skipSpaceState;
-            return null;
-        }
-        if (c == '"') {
-            this.state = this.stringState;
-            return null;
+        const rules = [
+            [(c) => c == null, this.endState],
+            [isDigit,          this.intOrFloatState],
+            [isIdentStart,     this.identState],
+            [isSpace,          this.skipSpaceState],
+            [(c) => c == '"',  this.stringState],
+        ];
+        for (const rule of rules) {
+            const predicate = rule.shift();
+            const newState  = rule.shift();
+            if (predicate(c)) {
+                this.state = newState;
+                return null;
+            }
         }
         const found = OPERATOR_TOKENS[c];
         if (!found) {
-            throw 'Unexpected token';
+            throw new Error('Unexpected token');
         }
         return found;
+    }
+    endState(c) {
+        return Token.EOS;
     }
     
     intOrFloatState(c) {
@@ -132,6 +133,9 @@ class Tokenizer {
     }
     
     stringState(c) {
+        if (!c) {
+            throw new Error('Unexpected End of Stream!');
+        }
         if (c == '\\') {
             this.escaped = true;
             return null;
